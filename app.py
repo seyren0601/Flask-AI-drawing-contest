@@ -8,7 +8,7 @@ app = Flask(__name__)
 api = Api(app)
 
 ### CREATE ###
-@api.route("/team", methods=['POST'])
+@api.route("/team/create", methods=['POST'])
 class team_create(Resource):
     def post(self):
         parser = reqparse.RequestParser()
