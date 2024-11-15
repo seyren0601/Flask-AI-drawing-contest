@@ -10,14 +10,20 @@ api = Api(app)
 
 ### READ ###
 @api.route("/user", methods=['GET', 'POST'])
+@api.param('user_id')
 class user(Resource):
     def get(self):
-        users = controller.get_all_user()
-        return users
+        user_id = request.args.get('user_id')
+        if user_id:
+            user = controller.get_user(user_id)
+            return user
+        else:
+            users = controller.get_all_user()
+            return users
     
 @api.route("/team", methods=['GET'])
 class team(Resource):
-    def get(self, team_id):
+    def get(self):
         teams = controller.get_all_teams()
         return teams
 

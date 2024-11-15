@@ -21,6 +21,12 @@ def GET_all_users():
 
     return res
 
+def GET_user(user_id):
+    db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
+    res = db_cursor.fetchone()
+    
+    return res
+
 def GET_all_teams():
     db_cursor.execute("SELECT * FROM team")
     res = db_cursor.fetchall()
