@@ -1,11 +1,13 @@
 from flask import Flask, Response
 from flask import request
+from flask_cors import CORS
 from flask_restx import reqparse
 from flask_restx import Api, Resource
 from Controllers import controller
 
 app = Flask(__name__)
 api = Api(app)
+CORS(api)
 
 ### CREATE ###
 @api.route("/user/create",methods = ['POST'])
