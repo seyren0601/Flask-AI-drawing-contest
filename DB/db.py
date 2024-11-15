@@ -21,15 +21,6 @@ def GET_all_users():
 
     return res
 
-
-def Count_user():
-    db_cursor.execute("SELECT COUNT(*) FROM user")
-    row = db_cursor.fetchone()
-    if row:        
-        return row['COUNT(*)']
-    else:
-        return 0
-        
     
 def CREATE_user(username,group_id,salt,hashed_pw):
     query = """
