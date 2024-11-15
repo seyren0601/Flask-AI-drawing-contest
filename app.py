@@ -22,10 +22,16 @@ class user(Resource):
             return users
     
 @api.route("/team", methods=['GET'])
+@api.param('team_id')
 class team(Resource):
     def get(self):
-        teams = controller.get_all_teams()
-        return teams
+        team_id = request.args.get('team_id')
+        if team_id:
+            team = controller.get_team(team_id)
+            return team
+        else:
+            teams = controller.get_all_teams()
+            return teams
 
 ### UPDATE ###
 

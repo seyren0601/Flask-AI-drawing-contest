@@ -1,5 +1,8 @@
 import mysql.connector
 import os
+import datetime
+import json
+from Helpers import date_helper
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,7 +33,17 @@ def GET_user(user_id):
 def GET_all_teams():
     db_cursor.execute("SELECT * FROM team")
     res = db_cursor.fetchall()
-    for row in res:
-        row['create_date'] = str(row['create_date'])
+    
+    # Parse datetime value to string
+    res = date_helper.query_date_to_string(res)
+    
+    return res
+
+def GET_team(team_id):
+    db_cursor.execute(f"SELECT * FROM team WHERE team_id = {team_id}")
+    res = db_cursor.fetchall()
+    
+    # Parse datetime value to string
+    res = date_helper.query_date_to_string(res)
     
     return res
