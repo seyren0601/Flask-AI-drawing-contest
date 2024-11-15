@@ -20,3 +20,15 @@ def GET_all_users():
     res = db_cursor.fetchall()
 
     return res
+
+
+
+    
+def CREATE_user(username,salt,hashedpw):
+    query = """
+        INSERT INTO users (username, salt, hashed_password)
+        VALUES (%s, %s, %s)
+    """
+    db_cursor.execute(query,(username,salt,hashedpw))
+    mysql_client.commit()
+    
