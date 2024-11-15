@@ -20,3 +20,11 @@ def GET_all_users():
     res = db_cursor.fetchall()
 
     return res
+
+def GET_all_teams():
+    db_cursor.execute("SELECT * FROM team")
+    res = db_cursor.fetchall()
+    for row in res:
+        row['create_date'] = str(row['create_date'])
+    
+    return res

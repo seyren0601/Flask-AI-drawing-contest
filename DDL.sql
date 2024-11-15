@@ -35,7 +35,7 @@ INSERT INTO team(team_name, create_date)
 VALUES("lmao", "2024-11-15");
 
 
-INSERT INTO user(username, name, email, group_id)
+INSERT INTO user(username, name, email, group_id, team_leader, team_id)
 VALUES
-	("adm0001", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
-    ("usr0000", "abc", "abc@gmail.comm", 3);
+	("adm0001", "Thịnh Nguyễn", "sorrenw@gmail.com", 0, false, null),
+    ("usr0000", "abc", "abc@gmail.comm", 3, true, 1);

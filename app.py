@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request
 from flask_restx import Api, Resource
 from Controllers import controller
 
@@ -13,6 +14,12 @@ class user(Resource):
     def get(self):
         users = controller.get_all_user()
         return users
+    
+@api.route("/team", methods=['GET'])
+class team(Resource):
+    def get(self, team_id):
+        teams = controller.get_all_teams()
+        return teams
 
 ### UPDATE ###
 
