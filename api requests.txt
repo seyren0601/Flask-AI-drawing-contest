@@ -1,0 +1,10 @@
+GET
+prompt count of user
+input: user_id
+
+đăng ký:
+required name, phone_number, email, password
+
+đăng nhập:
+email, password
+
