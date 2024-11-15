@@ -1,5 +1,12 @@
 from DB import db
 
+### CREATE ###
+def create_team(team_name):
+    team = db.CREATE_team(team_name)
+    return team
+
+
+### READ ###
 def get_all_user():
     users = db.GET_all_users()
     return users

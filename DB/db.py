@@ -2,6 +2,7 @@ import mysql.connector
 import os
 import datetime
 import json
+import logging
 from Helpers import date_helper
 from dotenv import load_dotenv
 
@@ -18,6 +19,22 @@ mysql_client = mysql.connector.connect(
 
 db_cursor = mysql_client.cursor(dictionary=True)
 
+### CREATE ###
+def CREATE_team(team_name):
+    current_date = datetime.date.today()
+    sql = f'INSERT INTO team(team_name, create_date) VALUES (\"{team_name}\", \"{current_date.year}-{current_date.month}-{current_date.day}\")'
+    logging.info(sql)
+    db_cursor.execute(sql)
+    mysql_client.commit()
+    
+    db_cursor.execute(f"SELECT * FROM team WHERE team_id = {db_cursor.lastrowid}")
+    team = db_cursor.fetchall()
+    date_helper.query_date_to_string(team)
+    
+    return team
+    
+
+### READ ###
 def GET_all_users():
     db_cursor.execute("SELECT * FROM user")
     res = db_cursor.fetchall()
