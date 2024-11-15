@@ -22,7 +22,10 @@ def GET_all_users():
     return res
 
 
-
+def Count_user():
+    db_cursor.execute("SELECT COUNT(*) FROM users")
+    row = db_cursor.fetchone()[0]
+    return row
     
 def CREATE_user(username,salt,hashedpw):
     query = """
