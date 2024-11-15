@@ -6,8 +6,8 @@ from flask_restx import Api, Resource
 from Controllers import controller
 
 app = Flask(__name__)
-api = Api(app)
-CORS(api)
+api = Api(CORS(app))
+
 
 ### CREATE ###
 @api.route("/user/create",methods = ['POST'])
