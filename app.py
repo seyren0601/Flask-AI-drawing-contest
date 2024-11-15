@@ -8,6 +8,12 @@ app = Flask(__name__)
 api = Api(app)
 
 ### CREATE ###
+@api.route("/user/create",methods = ['POST'])
+class user_create(Resource):
+    def post(self):
+        user = controller.create_user()
+        return user
+        
 @api.route("/team/create", methods=['POST'])
 class team_create(Resource):
     def post(self):

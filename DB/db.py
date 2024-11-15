@@ -20,6 +20,19 @@ mysql_client = mysql.connector.connect(
 db_cursor = mysql_client.cursor(dictionary=True)
 
 ### CREATE ###
+def CREATE_user(username,group_id,salt,hashed_pw):
+    query = """
+        INSERT INTO user (name, group_id,salt, hashed_pw)
+        VALUES (%s, %s, %s,%s)
+    """
+    db_cursor.execute(query,(username,group_id,salt,hashed_pw))
+    mysql_client.commit()
+   
+    db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")
+    user = db_cursor.fetchall()
+
+    return user
+
 def CREATE_team(team_name):
     current_date = datetime.date.today()
     sql = f'INSERT INTO team(team_name, create_date) VALUES (\"{team_name}\", \"{current_date.year}-{current_date.month}-{current_date.day}\")'
@@ -41,6 +54,9 @@ def GET_all_users():
 
     return res
 
+    
+
+    
 def GET_user(user_id):
     db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
     res = db_cursor.fetchone()
