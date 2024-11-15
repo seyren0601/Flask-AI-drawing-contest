@@ -2,9 +2,17 @@ DROP DATABASE IF EXISTS ai_drawing_contest;
 CREATE DATABASE ai_drawing_contest;
 USE ai_drawing_contest;
 
+CREATE TABLE team(
+	team_id int auto_increment,
+    team_name nvarchar(128),
+    create_date date,
+    PRIMARY KEY(team_id)
+);
+
 CREATE TABLE user(
 	user_id int auto_increment,
     name nvarchar(256),
+    username nvarchar(128),
     email nvarchar(256),
     phone_number nvarchar(256),
     group_id tinyint,
@@ -16,10 +24,18 @@ CREATE TABLE user(
     register_date date,
     school varchar(128),
     grade smallint,
-    PRIMARY KEY(user_id)
+    team_id integer,
+    team_leader boolean,
+    PRIMARY KEY(user_id),
+    FOREIGN KEY (team_id) REFERENCES team(team_id)
 );
 
-INSERT INTO user(name, email, group_id)
-VALUES 
-	("Thịnh Nguyễn", "sorrenw@gmail.com", 0),
-    ("abc", "abc@gmail.comm", 3)
+
+INSERT INTO team(team_name, create_date) 
+VALUES("lmao", "2024-11-15");
+
+
+INSERT INTO user(username, name, email, group_id)
+VALUES
+	("adm0001", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
+    ("usr0000", "abc", "abc@gmail.comm", 3);
