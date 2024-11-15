@@ -5,11 +5,10 @@ def get_all_user():
     return users
 
 def create_user():
-    username = 'usr'.join(db.Count_user())
-    print(username)
+    username = f"usr{db.Count_user():05}"    
     password = user.random_password()
-    salt , hashed_pw = user.hash_password(password)
-    
-    new_user = db.CREATE_user(username,salt,hashed_pw)
+    group_id = 3
+    salt , hashed_pw = user.hash_password(password)    
+    new_user = db.CREATE_user(username,group_id,salt,hashed_pw)
     return new_user
 

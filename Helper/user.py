@@ -3,7 +3,7 @@ import string
 import bcrypt
 
 def random_password(length=5):
-    password = ''.join(random.choices(string.ascii_letters),length)
+    password = ''.join(random.choices(string.ascii_letters,k=length))
     return password
 
 def hash_password(password):

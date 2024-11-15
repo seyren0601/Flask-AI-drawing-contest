@@ -23,15 +23,24 @@ def GET_all_users():
 
 
 def Count_user():
-    db_cursor.execute("SELECT COUNT(*) FROM users")
-    row = db_cursor.fetchone()[0]
-    return row
+    db_cursor.execute("SELECT COUNT(*) FROM user")
+    row = db_cursor.fetchone()
+    if row:        
+        return row['COUNT(*)']
+    else:
+        return 0
+        
     
-def CREATE_user(username,salt,hashedpw):
+def CREATE_user(username,group_id,salt,hashed_pw):
     query = """
-        INSERT INTO users (username, salt, hashed_password)
-        VALUES (%s, %s, %s)
+        INSERT INTO user (name, group_id,salt, hashed_pw)
+        VALUES (%s, %s, %s,%s)
     """
-    db_cursor.execute(query,(username,salt,hashedpw))
+    db_cursor.execute(query,(username,group_id,salt,hashed_pw))
     mysql_client.commit()
+   
+    db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")
+    user = db_cursor.fetchall()
+
+    return user
     

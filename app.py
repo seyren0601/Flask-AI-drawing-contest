@@ -6,20 +6,21 @@ app = Flask(__name__)
 api = Api(app)
 
 ### CREATE ###
-@app.route("/user/create",methods = ['POST'])
-def create_user():
-    user = controller.create_user()
-    return user
+@api.route("/user/create",methods = ['POST'])
+class user_create(Resource):
+    def post(self):
+        user = controller.create_user()
+        return user
 ### READ ###
 @api.route("/user", methods=['GET', 'POST'])
 class user(Resource):
     def get(self):
         users = controller.get_all_user()
         return users
-@app.route("/user", methods=['GET', 'POST'])
-def user():    
-    users = controller.get_all_user()
-    return users
+# @app.route("/user", methods=['GET', 'POST'])
+# def user():    
+#     users = controller.get_all_user()
+#     return users
 
 ### UPDATE ###
 
