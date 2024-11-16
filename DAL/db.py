@@ -46,6 +46,13 @@ def CREATE_team(team_name):
     
     return team
     
+def CREATE_prompt(team_id,date_time,prompt,image,submitted):
+    query = """
+        INSERT INTO prompts (team_id,date_time,prompt,image,submitted)
+        VALUE (%s,%s,%s,%s,%s)
+    """
+    db_cursor.execute(query,(team_id,date_time,prompt,image,submitted))
+    mysql_client.commit()
 
 ### READ ###
 def GET_all_users():
