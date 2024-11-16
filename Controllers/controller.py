@@ -1,6 +1,6 @@
-from DAL import db
+from DAL import db,model
 from Helper import user
-
+from datetime import datetime
 ### CREATE ###
 def create_team(team_name):
     team = db.CREATE_team(team_name)
@@ -14,6 +14,13 @@ def create_user():
     new_user = db.CREATE_user(username,group_id,salt,hashed_pw)
     return new_user
 
+def image_generate(team_id,prompt):    
+    image = model.image_generate(prompt)
+    date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    submitted = 0
+    
+    db.CREATE_prompt(team_id,date_time,prompt,image,submitted)
+    return image
 ### READ ###
 def get_all_user():
     users = db.GET_all_users()

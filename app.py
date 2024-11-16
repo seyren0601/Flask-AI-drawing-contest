@@ -5,6 +5,7 @@ from flask_restx import reqparse
 from flask_restx import Api, Resource
 from Controllers import controller
 
+
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
@@ -28,6 +29,19 @@ class team_create(Resource):
         
         return team
 
+@api.route("/prompt/create",methods=['POST'])
+class prompt_create(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('team_id',type=int,required=True,location='json')
+        parser.add_argument('prompt',type=str,required=True,location='json')
+        argument = parser.parse_args()
+
+        team_id = argument['team_id']
+        prompt = argument['prompt']
+
+        image = controller.image_generate(team_id,prompt)
+        return image
 ### READ ###
 @api.route("/user", methods=['GET'])
 @api.param('user_id')
