@@ -20,12 +20,12 @@ mysql_client = mysql.connector.connect(
 db_cursor = mysql_client.cursor(dictionary=True)
 
 ### CREATE ###
-def CREATE_user(username,group_id,salt,hashed_pw):
+def CREATE_user(username,group_id,salt,hashed_pw,date_string):
     query = """
-        INSERT INTO user (username, group_id,salt, hashed_pw)
-        VALUES (%s, %s, %s,%s)
+        INSERT INTO user (username, group_id,salt, hashed_pw, register_date)
+        VALUES (%s, %s, %s,%s, %s)
     """
-    db_cursor.execute(query,(username,group_id,salt,hashed_pw))
+    db_cursor.execute(query,(username,group_id,salt,hashed_pw,date_string))
     mysql_client.commit()
    
     db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")
@@ -50,7 +50,9 @@ def GET_all_users():
     
 def GET_user(user_id):
     db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
-    res = db_cursor.fetchone()
+    res = db_cursor.fetchall()
+    
+    res = date_helper.query_date_to_string(res)
     
     return res
 
@@ -98,7 +100,5 @@ def GET_team_submission(team_id):
                             WHERE prompts.team_id = {team_id}""")
     res = db_cursor.fetchall()
     
-    # if len(res) == 0:
-    #     return None
     res = date_helper.query_date_to_string(res)
     return res
