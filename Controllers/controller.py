@@ -14,7 +14,7 @@ def create_user():
     new_user = db.CREATE_user(username,group_id,salt,hashed_pw)
     return new_user
 
-def image_generate(team_id,prompt):    
+def create_prompt(team_id,prompt):    
     image = model.image_generate(prompt)
     date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     submitted = 0

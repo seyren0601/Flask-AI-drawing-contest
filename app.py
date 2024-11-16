@@ -40,7 +40,7 @@ class prompt_create(Resource):
         team_id = argument['team_id']
         prompt = argument['prompt']
 
-        image = controller.image_generate(team_id,prompt)
+        image = controller.create_prompt(team_id,prompt)
         return image
 ### READ ###
 @api.route("/user", methods=['GET'])

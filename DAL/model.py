@@ -28,4 +28,4 @@ def image_generate(prompt):
         response_format='b64_json'
     )
     
-    return str(response.data[0].b64_json).strip("\"")
+    return response.data[0].b64_json
