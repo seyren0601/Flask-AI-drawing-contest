@@ -152,3 +152,13 @@ def GET_all_assigned_submissions():
 def UPDATE_prompt(prompt_id):
     db_cursor.execute(f"UPDATE prompts SET submitted = 1 WHERE prompt_id = {prompt_id}")
     mysql_client.commit()
+    
+def UPDATE_assigned_submission(submission_id, status, comment, score, update_time):
+    db_cursor.execute(f"""UPDATE assigned_submissions
+                            SET status = {status}, comment = {comment}, modified_date = {update_time}
+                            WHERE submission_id = {submission_id}""")
+    
+    db_cursor.execute(f"""UPDATE submission
+                            SET score = {score}
+                            WHERE submission_id = {submission_id}""")
+    mysql_client.commit()

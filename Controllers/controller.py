@@ -74,3 +74,11 @@ def get_assigned_submission(submission_id):
 def get_all_assigned_submissions():
     assigned_submissions = db.GET_all_assigned_submissions()
     return assigned_submissions
+
+### UPDATE ###
+def update_assigned_submission(submission_id, status, comment, score):
+    update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    db.UPDATE_assigned_submission(submission_id, status, comment, score, update_time)
+
+
+### DELETE ###

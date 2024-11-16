@@ -110,6 +110,24 @@ class assigned_submissions(Resource):
         return all_assigned_submissions
         
 ### UPDATE ###
+@api.route("/assigned_submission/update", methods=["POST"])
+class assigned_submission_update(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('submission_id',type=int,required=True,location='json')
+        parser.add_argument('status', type=int,required=True,location='json')
+        parser.add_argument('comment', type=str,required=True,location='json', default="")
+        parser.add_argument('score',type=float,required=True,location='json')
+        argument = parser.parse_args()
+        
+        submission_id = argument['submission_id']
+        status = argument['status']
+        comment = argument['comment']
+        score = argument['score']
+        controller.update_assigned_submission(submission_id, status, comment, score)
+        
+        return Response(status=200)
+
 
 ### DELETE ###
 
