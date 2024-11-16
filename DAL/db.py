@@ -169,7 +169,7 @@ def UPDATE_prompt(prompt_id):
     
 def UPDATE_assigned_submission(submission_id, status, comment, score, update_time):
     db_cursor.execute(f"""UPDATE assigned_submissions
-                            SET status = {status}, comment = {comment}, modified_date = {update_time}
+                            SET status = {status}, comment = \"{comment}\", modified_date = \"{update_time}\"
                             WHERE submission_id = {submission_id}""")
     
     db_cursor.execute(f"""UPDATE submission

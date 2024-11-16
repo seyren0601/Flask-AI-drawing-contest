@@ -41,7 +41,7 @@ class submission_create(Resource):
         submission = controller.create_submission(prompt_id,video)        
         return submission
     
-@api.route("/submission/assigned",methods=["POST"])
+@api.route("/assigned_submission/create",methods=["POST"])
 class submission_assigned(Resource):
     def post(self):
         parser = reqparse.RequestParser()
