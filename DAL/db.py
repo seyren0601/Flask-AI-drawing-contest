@@ -54,6 +54,19 @@ def CREATE_submission(prompt_id,submit_date,video,score):
     date_helper.query_date_to_string(submission)
     return submission
 
+def CREATE_assigned_submission(grader_id,submission_id,status,modified_date,comment,assigned_date,assigner_id):
+    query = """
+        INSERT INTO assigned_submissions (grader_id,submission_id,status,modified_date,comment,assigned_date,assigner_id)
+        VALUE (%s,%s,%s,%s,%s,%s,%s)
+    """
+    db_cursor.execute(query,(grader_id,submission_id,status,modified_date,comment,assigned_date,assigner_id))
+    mysql_client.commit()
+
+    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE submission_id = {db_cursor.lastrowid}")
+    assigned_submission = db_cursor.fetchall()
+    date_helper.query_date_to_string(assigned_submission)
+    return assigned_submission
+
 ### READ ###
 def GET_all_users():
     db_cursor.execute("SELECT * FROM user")
