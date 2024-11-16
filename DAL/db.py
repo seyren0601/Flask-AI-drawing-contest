@@ -62,7 +62,8 @@ def CREATE_assigned_submission(grader_id,submission_id,status,modified_date,comm
     db_cursor.execute(query,(grader_id,submission_id,status,modified_date,comment,assigned_date,assigner_id))
     mysql_client.commit()
 
-    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE submission_id = {db_cursor.lastrowid}")
+    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE grader_id = {grader_id} AND submission_id = {submission_id}")
+
     assigned_submission = db_cursor.fetchall()
     date_helper.query_date_to_string(assigned_submission)
     return assigned_submission
