@@ -41,6 +41,19 @@ def CREATE_prompt(team_id,date_time,prompt,image,submitted):
     db_cursor.execute(query,(team_id,date_time,prompt,image,submitted))
     mysql_client.commit()
 
+def CREATE_submission(prompt_id,submit_date,video,score):
+    query = """
+        INSERT INTO submission (prompt_id,submit_date,video,score)
+        VALUE (%s,%s,%s,%s)
+    """
+    db_cursor.execute(query,(prompt_id,submit_date,video,score))
+    mysql_client.commit()
+
+    db_cursor.execute(f"SELECT * FROM submission WHERE submission_id = {db_cursor.lastrowid}")
+    submission = db_cursor.fetchall()
+    date_helper.query_date_to_string(submission)
+    return submission
+
 ### READ ###
 def GET_all_users():
     db_cursor.execute("SELECT * FROM user")
@@ -102,3 +115,7 @@ def GET_team_submission(team_id):
     
     res = date_helper.query_date_to_string(res)
     return res
+### Update ###
+def UPDATE_prompt(prompt_id):
+    db_cursor.execute(f"UPDATE prompts SET submitted = 1 WHERE prompt_id = {prompt_id}")
+    mysql_client.commit()
