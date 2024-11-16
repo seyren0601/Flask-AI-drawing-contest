@@ -42,6 +42,20 @@ class prompt_create(Resource):
 
         image = controller.create_prompt(team_id,prompt)
         return image
+    
+@api.route("/submission/create",methods=['POST'])
+class submission_create(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()        
+        parser.add_argument('prompt_id',type=int,required=True,location='json')
+        parser.add_argument('video',type=str,required=True,location='json')
+        argument = parser.parse_args()
+        
+        prompt_id = argument['prompt_id']
+        video = argument['video']
+        submission = controller.create_submission(prompt_id,video)
+        
+        return submission
 ### READ ###
 @api.route("/user", methods=['GET'])
 @api.param('user_id')
@@ -82,6 +96,8 @@ class prompts_read(Resource):
             return prompt
         prompts = controller.get_all_prompts()
         return prompts
+
+
 
 ### UPDATE ###
 

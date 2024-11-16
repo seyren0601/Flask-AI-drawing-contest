@@ -21,6 +21,13 @@ def create_prompt(team_id,prompt):
     
     db.CREATE_prompt(team_id,date_time,prompt,image,submitted)
     return image
+
+def create_submission(prompt_id,video):
+    date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    score = None
+    submission = db.CREATE_submission(prompt_id,date_time,video,score)
+    prompt = db.UPDATE_prompt(prompt_id)
+    return submission
 ### READ ###
 def get_all_user():
     users = db.GET_all_users()
@@ -49,3 +56,10 @@ def get_prompt(prompt_id):
 def get_all_prompts():
     prompts = db.GET_all_prompts()
     return prompts
+
+def get_team_submission(team_id):
+    pass
+def get_submission(prompt_id):
+    pass
+def get_all_submission():
+    pass
