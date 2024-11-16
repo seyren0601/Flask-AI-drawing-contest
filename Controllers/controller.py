@@ -50,9 +50,12 @@ def user_authenticate(username, password):
     user_authentication = query_res[0]
     salt = user_authentication['salt'].encode('utf-8')
     hashed_pw = user_authentication['hashed_pw'].encode('utf-8')
+    
     user_id = user_authentication['user_id']
-    if user.hash_password(password, salt)[1] == hashed_pw:
+    print(f"Login hashed_pw: {user.hash_password(password, salt)[1]}")      
+    if user.hash_password(password, salt)[1] == hashed_pw:        
         return user_id
+
     return None
 
 def get_team_prompts(team_id):
@@ -97,18 +100,20 @@ def get_all_assigned_submissions():
 
 ### UPDATE ###
 def update_user(user_id,name,username,email,phonenumber,new_password,team_info):
-    if new_password is None:        
-        current_user = get_user(user_id)[0]
-        salt = current_user['salt']
+    print(new_password)
+    current_user = get_user(user_id)[0]
+    salt = current_user['salt'].encode("utf-8")
+    if new_password:      
+        hashed_pw = user.hash_password(new_password,salt)[1]  
+        print(f"Update hashed_pw: {hashed_pw}")                    
+        
+    else:        
         hashed_pw = current_user['hashed_pw']
-    else:
-        salt ,hashed_pw = user.hash_password(new_password)    
     update_data = {
         "name": name,
         "username": username,
         "email":email,
-        "phone_number":phonenumber,
-        "salt": salt,
+        "phone_number":phonenumber,        
         "hashed_pw":hashed_pw,
         "team_info":team_info
     }

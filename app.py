@@ -146,7 +146,7 @@ class user_update(Resource):
         parser.add_argument('username',type=str,required=True,location='json')
         parser.add_argument('email',type=str,required=False,location='json')
         parser.add_argument('phonenumber',type=str,required=False,location='json')
-        parser.add_argument('new_password',type=str,required=False,location='json')
+        parser.add_argument('password',type=str,required=False,location='json')
         parser.add_argument('team_info',type=str,required=False,location='json')
         argument = parser.parse_args()
         #########################
@@ -155,7 +155,7 @@ class user_update(Resource):
         username = argument['username']
         email = argument['email']
         phonenumber = argument['phonenumber']
-        new_password = argument['new_password']
+        new_password = argument['password']
         team_info = argument['team_info']
         ########################
         controller.update_user(user_id,name,username,email,phonenumber,new_password,team_info)
