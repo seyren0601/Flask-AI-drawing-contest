@@ -45,15 +45,15 @@ VALUES
     
 INSERT INTO prompts(team_id, prompt, image, submitted)
 VALUES
-	(2, "abc", "b64", 1),
+	(2, "abc", "b64", 0),
     (2, "xyz", "b64", 0),
     (2, "qwerty", "b64", 0),
     (3, "abc", "b64", 0),
-    (3, "xyz", "b64", 1),
+    (3, "xyz", "b64", 0),
     (3, "qwerty", "b64", 0);
 
-INSERT INTO submission(prompt_id, video)
+/*INSERT INTO submission(prompt_id, video)
 VALUES
 	(1, "sample_url"),
-    (5, "sample_url");
+    (5, "sample_url");*/
     
