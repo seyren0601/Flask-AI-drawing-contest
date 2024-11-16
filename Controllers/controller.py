@@ -43,6 +43,18 @@ def get_user(user_id):
     user = db.GET_user(user_id)
     return user
 
+def user_authenticate(username, password):
+    query_res = db.GET_user_authentication(username)
+    if len(query_res) == 0:
+        return None
+    user_authentication = query_res[0]
+    salt = user_authentication['salt'].encode('utf-8')
+    hashed_pw = user_authentication['hashed_pw'].encode('utf-8')
+    user_id = user_authentication['user_id']
+    if user.hash_password(password, salt)[1] == hashed_pw:
+        return user_id
+    return None
+
 def get_team_prompts(team_id):
     prompts = db.GET_team_prompts(team_id)
     return prompts
