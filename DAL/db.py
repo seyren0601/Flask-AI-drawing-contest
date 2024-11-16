@@ -53,9 +53,6 @@ def GET_all_users():
     res = db_cursor.fetchall()
 
     return res
-
-    
-
     
 def GET_user(user_id):
     db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
@@ -79,4 +76,28 @@ def GET_team(team_id):
     # Parse datetime value to string
     res = date_helper.query_date_to_string(res)
     
+    return res
+
+def GET_team_prompts(team_id):
+    db_cursor.execute(f"""SELECT team.team_id, team_name, prompt_id, date_time, prompt, image, submitted
+                        FROM team INNER JOIN prompts ON team.team_id = prompts.team_id
+                        WHERE team.team_id = {team_id}
+                      """)
+    res = db_cursor.fetchall()
+    
+    res = date_helper.query_date_to_string(res)
+    return res
+
+def GET_prompt(prompt_id):
+    db_cursor.execute(f"SELECT * FROM prompts WHERE prompt_id = {prompt_id}")
+    res = db_cursor.fetchall()
+    
+    res = date_helper.query_date_to_string(res)
+    return res
+
+def GET_all_prompts():
+    db_cursor.execute(f"SELECT * FROM prompts")
+    res = db_cursor.fetchall()
+    
+    res = date_helper.query_date_to_string(res)
     return res

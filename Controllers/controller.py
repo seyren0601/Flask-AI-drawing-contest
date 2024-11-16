@@ -30,3 +30,15 @@ def get_all_teams():
 def get_team(team_id):
     team = db.GET_team(team_id)
     return team
+
+def get_team_prompts(team_id):
+    prompts = db.GET_team_prompts(team_id)
+    return prompts
+
+def get_prompt(prompt_id):
+    prompt = db.GET_prompt(prompt_id)
+    return prompt
+
+def get_all_prompts():
+    prompts = db.GET_all_prompts()
+    return prompts

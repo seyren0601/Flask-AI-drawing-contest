@@ -52,6 +52,22 @@ class team_read(Resource):
         else:
             teams = controller.get_all_teams()
             return teams
+        
+@api.route("/prompts", methods=['GET'])
+@api.param('team_id')
+@api.param('prompt_id')
+class prompts_read(Resource):
+    def get(self):
+        team_id = request.args.get('team_id')
+        prompt_id = request.args.get('prompt_id')
+        if team_id:
+            prompts = controller.get_team_prompts(team_id)
+            return prompts
+        if prompt_id:
+            prompt = controller.get_prompt(prompt_id)
+            return prompt
+        prompts = controller.get_all_prompts()
+        return prompts
 
 ### UPDATE ###
 
