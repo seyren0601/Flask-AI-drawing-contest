@@ -120,6 +120,31 @@ class assigned_submissions(Resource):
         return all_assigned_submissions
         
 ### UPDATE ###
+@api.route("/user/update",methods=["POST"])
+class user_update(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('user_id',type=int,required=True,location='json')
+        parser.add_argument('name',type=str,required=False,location='json')
+        parser.add_argument('username',type=str,required=True,location='json')
+        parser.add_argument('email',type=str,required=False,location='json')
+        parser.add_argument('phonenumber',type=str,required=False,location='json')
+        parser.add_argument('new_password',type=str,required=False,location='json')
+        parser.add_argument('team_info',type=str,required=False,location='json')
+        argument = parser.parse_args()
+        #########################
+        user_id  = argument['user_id']        
+        name = argument['name']
+        username = argument['username']
+        email = argument['email']
+        phonenumber = argument['phonenumber']
+        new_password = argument['new_password']
+        team_info = argument['team_info']
+        ########################
+        controller.update_user(user_id,name,username,email,phonenumber,new_password,team_info)
+
+        return Response(status=200)
+
 @api.route("/assigned_submission/update", methods=["POST"])
 class assigned_submission_update(Resource):
     def post(self):
@@ -140,6 +165,5 @@ class assigned_submission_update(Resource):
 
 
 ### DELETE ###
-
 if __name__ == '__main__':
     app.run(debug=True)

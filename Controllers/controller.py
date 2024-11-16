@@ -40,7 +40,7 @@ def get_all_user():
     return users
 
 def get_user(user_id):
-    user = db.GET_user(user_id)
+    user = db.GET_user(user_id)    
     return user
 
 def get_team_prompts(team_id):
@@ -84,6 +84,24 @@ def get_all_assigned_submissions():
     return assigned_submissions
 
 ### UPDATE ###
+def update_user(user_id,name,username,email,phonenumber,new_password,team_info):
+    if new_password is None:        
+        current_user = get_user(user_id)[0]
+        salt = current_user['salt']
+        hashed_pw = current_user['hashed_pw']
+    else:
+        salt ,hashed_pw = user.hash_password(new_password)    
+    update_data = {
+        "name": name,
+        "username": username,
+        "email":email,
+        "phone_number":phonenumber,
+        "salt": salt,
+        "hashed_pw":hashed_pw,
+        "team_info":team_info
+    }
+    db.UPDATE_user(user_id,update_data)
+
 def update_assigned_submission(submission_id, status, comment, score):
     update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     db.UPDATE_assigned_submission(submission_id, status, comment, score, update_time)

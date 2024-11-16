@@ -72,15 +72,12 @@ def CREATE_assigned_submission(grader_id,submission_id,status,modified_date,comm
 def GET_all_users():
     db_cursor.execute("SELECT * FROM user")
     res = db_cursor.fetchall()
-
     return res
     
 def GET_user(user_id):
     db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
     res = db_cursor.fetchall()
-    
-    res = date_helper.query_date_to_string(res)
-    
+    res = date_helper.query_date_to_string(res)    
     return res
 
 def GET_team_prompts(team_id):
@@ -163,6 +160,23 @@ def GET_all_assigned_submissions():
     return res 
     
 ### Update ###
+def UPDATE_user(user_id, update_data):
+    params = []
+    updates = []
+    for key , value in update_data.items():
+        if value is not None:
+            updates.append(f"{key} = %s")
+            params.append(value)
+
+    params.append(user_id)
+    
+    query = f"""UPDATE user 
+                SET {', '.join(updates)}
+                WHERE user_id = %s"""
+    db_cursor.execute(query,tuple(params))
+    mysql_client.commit()
+    print("User updated successfully.")
+
 def UPDATE_prompt(prompt_id):
     db_cursor.execute(f"UPDATE prompts SET submitted = 1 WHERE prompt_id = {prompt_id}")
     mysql_client.commit()
@@ -176,3 +190,4 @@ def UPDATE_assigned_submission(submission_id, status, comment, score, update_tim
                             SET score = {score}
                             WHERE submission_id = {submission_id}""")
     mysql_client.commit()
+
