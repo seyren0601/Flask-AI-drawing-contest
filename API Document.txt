@@ -31,7 +31,14 @@ return:
 	+ Với query_string user_id: Trả về user có user_id tương ứng
 
 
-
+endpoint /user/authenticate
+method: POST
+payload: {'username':string, 'password':string}
+query_string:
+description: Endpoint dùng để xác thực user bằng username và password
+return:
+	+ Object {'user_id':int} nếu xác thực thành công
+	+ Response 401 nếu xác thực thất bại
 
 
 ### PROMPTS ###
