@@ -80,6 +80,12 @@ def GET_user(user_id):
     res = date_helper.query_date_to_string(res)    
     return res
 
+def GET_user_authentication(username):
+    db_cursor.execute(f"SELECT user_id, salt, hashed_pw FROM user WHERE username = \"{username}\"")
+    res = db_cursor.fetchall()
+    
+    return res
+
 def GET_team_prompts(team_id):
     db_cursor.execute(f"""SELECT team_id, name, prompt_id, date_time, prompt, image, submitted
                         FROM user INNER JOIN prompts ON user.user_id = prompts.team_id

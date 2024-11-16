@@ -5,7 +5,7 @@ USE ai_drawing_contest;
 CREATE TABLE user(
 	user_id int auto_increment,
     name nvarchar(256),
-    username nvarchar(128),
+    username nvarchar(128) unique,
     email nvarchar(256),
     phone_number nvarchar(256),
     group_id tinyint,

@@ -1,0 +1,131 @@
+### USER ###
+
+--- CREATE ---
+endpoint: /user/create
+method: GET
+payload:
+query_string:
+description: BE tự động tạo một account user với các thông số như sau
+	+ id (int) : tự động sinh
+	+ username (str) : tự động sinh với format [usr][00000], 5 chữ số sau cùng sẽ được BE tự tạo
+	+ password : tự động sinh
+	+ salt: tự động sinh
+	+ hashed_pw: hash từ password
+	+ group_id : 3
+return: Một object với schema như sau:
+{
+	'user_id' : int,
+	'user_name' : str,
+	'password' : str	
+}
+
+--- READ ---
+endpoint: /user
+method: GET
+payload:
+query_string:
+	+ user_id: int
+description: Endpoint dùng để get các user
+return:
+	+ Default: Trả về list tất cả các user trên database
+	+ Với query_string user_id: Trả về user có user_id tương ứng
+
+
+endpoint /user/authenticate
+method: POST
+payload: {'username':string, 'password':string}
+query_string:
+description: Endpoint dùng để xác thực user bằng username và password
+return:
+	+ Object {'user_id':int} nếu xác thực thành công
+	+ Response 401 nếu xác thực thất bại
+
+
+### PROMPTS ###
+
+--- CREATE ---
+endpoint: /prompt/create
+method: POST
+payload: { 'team_id':int, 'prompt':string }
+query_string:
+description: Tạo thêm một prompt cho team_id (user_id) tương ứng
+return: Chuỗi Base64 trả về từ model DALL-E-3 của OpenAI
+
+--- READ ---
+endpoint: /prompts
+method: GET
+payload:
+query_string:
+	+ team_id: int
+	+ prompt_id: int
+description: Endpoint dùng để get các prompt
+return:
+	+ Default: Trả về list tất cả các prompt đã có trên database
+	+ Với query_string team_id: Trả về các prompt của team có team_id tương ứng
+	+ Với query_string prompt_id: Trả về prompt có prompt_id tương ứng
+
+
+
+### SUBMISSION ###
+
+--- CREATE ---
+endpoint: /submission/create
+method: POST
+payload: { 'prompt_id':int, 'video':string }
+query_string:
+description: Endpoint dùng để tạo một submission
+return: Object submission đã được tạo
+
+--- READ ---
+endpoint: /submission
+method: GET
+payload:
+query_string:
+	+ submission_id: int
+	+ team_id: int
+description: Endpoint dùng để get các submission
+return:
+	+ Default: Trả về list tất cả các submission đã được submit
+	+ Với query_string submission_id: Trả về submission với submission_id tương ứng
+	+ Với query_string team_id: Trả về submission của team có team_id tương ứng
+
+### ASSIGNED_SUBMISSIONS ###
+
+--- CREATE ---
+endpoint: /assigned_submission/create
+method: POST
+payload: { 'grader_id':int, 'submission_id':int, 'assigner_id':int }
+query_string:
+description: Endpoint dùng để phân công các submission cho người chấm
+return: Object assigned_submission đã được phân công
+***GHI CHÚ***
+grader_id và assigner_id đều là FK của user_id trong table user.
+
+--- READ ---
+endpoint: /assigned_submissions
+method: GET
+payload:
+query_string:
+	+ grader_id: int
+	+ assigner_id: int
+	+ submission_id: int
+return:
+	+ Default: Trả về list tất cả các assigned_submission (type:assigned_submission)
+	+ grader_id: Trả về list các assigned_submission được phân công cho người chấm có grader_id (user_id) tương ứng
+	+ assigner_id: Trả về list các assigned_submission được phân công bởi người phân công có assigner_id (user_id) tương ứng
+	+ submission_id: Trả về object assigned_submission cho submission có submission_id tương ứng
+
+--- UPDATE ---
+endpoint: /assigned_submission/update
+method: POST
+payload:
+{
+	submission_id: int,
+	status_id: int,
+	comment: string,
+	score: float
+}
+description: Endpoint dùng để chấm điểm cho một assigned_submission
+return: status code 200 nếu update thành công
+***GHI CHÚ*** Sau khi chạy endpoint này, submission có submission_id tương ứng trong table submission
+cũng sẽ được update score theo giá trị score truyền vào payload.

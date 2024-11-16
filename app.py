@@ -67,6 +67,23 @@ class user_read(Resource):
             users = controller.get_all_user()
             return users
         
+@api.route("/user/authenticate", methods=['POST'])
+class user_login(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('username',type=str,required=True,location='json')
+        parser.add_argument('password',type=str,required=True,location='json')
+        arguments = parser.parse_args()
+        
+        username = arguments['username']
+        password = arguments['password']
+        user_id = controller.user_authenticate(username, password)
+        if user_id:
+            return {'user_id':user_id}
+        else:
+            return Response(status=401, response="Failed Authentication")
+    
+        
 @api.route("/prompts", methods=['GET'])
 @api.param('team_id')
 @api.param('prompt_id')
