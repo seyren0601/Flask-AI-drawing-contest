@@ -20,12 +20,16 @@ SIZE = "1024x1024"
 QUALITY="standard"
 
 def image_generate(prompt):
-    response = client.images.generate(
-        model=MODEL,
-        prompt=prompt,
-        size=SIZE,
-        quality=QUALITY,
-        response_format='b64_json'
-    )
+    # response = client.images.generate(
+    #     model=MODEL,
+    #     prompt=prompt,
+    #     size=SIZE,
+    #     quality=QUALITY,
+    #     response_format='b64_json'
+    # )
     
-    return response.data[0].b64_json
+    # return response.data[0].b64_json
+    with open("D:\\test.txt") as f:
+      response = f.read()
+      
+    return response

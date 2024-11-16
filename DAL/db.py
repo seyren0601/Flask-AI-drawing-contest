@@ -22,7 +22,7 @@ db_cursor = mysql_client.cursor(dictionary=True)
 ### CREATE ###
 def CREATE_user(username,group_id,salt,hashed_pw):
     query = """
-        INSERT INTO user (name, group_id,salt, hashed_pw)
+        INSERT INTO user (username, group_id,salt, hashed_pw)
         VALUES (%s, %s, %s,%s)
     """
     db_cursor.execute(query,(username,group_id,salt,hashed_pw))
@@ -31,20 +31,7 @@ def CREATE_user(username,group_id,salt,hashed_pw):
     db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")
     user = db_cursor.fetchall()
 
-    return user
-
-def CREATE_team(team_name):
-    current_date = datetime.date.today()
-    sql = f'INSERT INTO team(team_name, create_date) VALUES (\"{team_name}\", \"{current_date.year}-{current_date.month}-{current_date.day}\")'
-    logging.info(sql)
-    db_cursor.execute(sql)
-    mysql_client.commit()
-    
-    db_cursor.execute(f"SELECT * FROM team WHERE team_id = {db_cursor.lastrowid}")
-    team = db_cursor.fetchall()
-    date_helper.query_date_to_string(team)
-    
-    return team
+    return user[0]
     
 def CREATE_prompt(team_id,date_time,prompt,image,submitted):
     query = """
@@ -67,31 +54,15 @@ def GET_user(user_id):
     
     return res
 
-def GET_all_teams():
-    db_cursor.execute("SELECT * FROM team")
-    res = db_cursor.fetchall()
-    
-    # Parse datetime value to string
-    res = date_helper.query_date_to_string(res)
-    
-    return res
-
-def GET_team(team_id):
-    db_cursor.execute(f"SELECT * FROM team WHERE team_id = {team_id}")
-    res = db_cursor.fetchall()
-    
-    # Parse datetime value to string
-    res = date_helper.query_date_to_string(res)
-    
-    return res
-
 def GET_team_prompts(team_id):
-    db_cursor.execute(f"""SELECT team.team_id, team_name, prompt_id, date_time, prompt, image, submitted
-                        FROM team INNER JOIN prompts ON team.team_id = prompts.team_id
-                        WHERE team.team_id = {team_id}
+    db_cursor.execute(f"""SELECT team_id, name, prompt_id, date_time, prompt, image, submitted
+                        FROM user INNER JOIN prompts ON user.user_id = prompts.team_id
+                        WHERE team_id = {team_id}
                       """)
     res = db_cursor.fetchall()
     
+    if len(res) == 0:
+        return None
     res = date_helper.query_date_to_string(res)
     return res
 

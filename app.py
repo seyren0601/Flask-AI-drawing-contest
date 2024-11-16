@@ -11,23 +11,11 @@ api = Api(app)
 CORS(app)
 
 ### CREATE ###
-@api.route("/user/create",methods = ['POST'])
+@api.route("/user/create",methods = ['GET'])
 class user_create(Resource):
-    def post(self):
+    def get(self):
         user = controller.create_user()
         return user
-        
-@api.route("/team/create", methods=['POST'])
-class team_create(Resource):
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('team_name', type=str, required=True, location='json')
-        argument = parser.parse_args()
-        
-        team_name = argument['team_name']
-        team = controller.create_team(team_name)
-        
-        return team
 
 @api.route("/prompt/create",methods=['POST'])
 class prompt_create(Resource):
@@ -54,18 +42,6 @@ class user_read(Resource):
         else:
             users = controller.get_all_user()
             return users
-    
-@api.route("/team", methods=['GET'])
-@api.param('team_id')
-class team_read(Resource):
-    def get(self):
-        team_id = request.args.get('team_id')
-        if team_id:
-            team = controller.get_team(team_id)
-            return team
-        else:
-            teams = controller.get_all_teams()
-            return teams
         
 @api.route("/prompts", methods=['GET'])
 @api.param('team_id')
