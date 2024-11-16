@@ -59,6 +59,22 @@ class prompts_read(Resource):
         prompts = controller.get_all_prompts()
         return prompts
 
+@api.route("/submission", methods=['GET'])
+@api.param('submission_id')
+@api.param('team_id')
+class submission_read(Resource):
+    def get(self):
+        submission_id = request.args.get('submission_id')
+        team_id = request.args.get('team_id')
+        if submission_id:
+            submission = controller.get_submission(submission_id)
+            return submission
+        if team_id:
+            submission = controller.get_team_submission(team_id)
+            return submission
+        submissions = controller.get_all_submissions()
+        return submissions
+        
 ### UPDATE ###
 
 ### DELETE ###

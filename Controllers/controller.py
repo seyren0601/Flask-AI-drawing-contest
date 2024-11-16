@@ -37,3 +37,15 @@ def get_prompt(prompt_id):
 def get_all_prompts():
     prompts = db.GET_all_prompts()
     return prompts
+
+def get_all_submissions():
+    submissions = db.GET_all_submissions()
+    return submissions
+
+def get_team_submission(team_id):
+    submission = db.GET_team_submission(team_id)
+    return submission
+
+def get_submission(submission_id):
+    submission = db.GET_submission(submission_id)
+    return submission

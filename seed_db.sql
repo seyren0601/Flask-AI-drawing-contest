@@ -27,11 +27,33 @@ CREATE TABLE prompts(
     FOREIGN KEY (team_id) REFERENCES user(user_id)
 );
 
+CREATE TABLE submission(
+	submission_id int auto_increment,
+    prompt_id int,
+    submit_date datetime,
+    video varchar(256),
+    score float,
+    PRIMARY KEY(submission_id),
+    FOREIGN KEY(prompt_id) REFERENCES prompts(prompt_id)
+);
+
 INSERT INTO user(username, name, email, group_id)
 VALUES
 	("adm0001", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
-    ("usr0000", "team_name", "abc@gmail.comm", 3);
+    ("usr00000", "team_name", "abc@gmail.com", 3),
+    ("usr00001", "team_name", "xyz@gmail.com", 3);
     
 INSERT INTO prompts(team_id, prompt, image, submitted)
 VALUES
-	(1, "abc", "b64", 0)
+	(2, "abc", "b64", 1),
+    (2, "xyz", "b64", 0),
+    (2, "qwerty", "b64", 0),
+    (3, "abc", "b64", 0),
+    (3, "xyz", "b64", 1),
+    (3, "qwerty", "b64", 0);
+
+INSERT INTO submission(prompt_id, video)
+VALUES
+	(1, "sample_url"),
+    (5, "sample_url");
+    
