@@ -55,8 +55,6 @@ CREATE TABLE assigned_submissions(
 INSERT INTO user(username, name, email, group_id)
 VALUES
 	("adm00001", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
-    ("usr00000", "team_name", "abc@gmail.com", 3),
-    ("usr00001", "team_name", "xyz@gmail.com", 3),
     ("usr00002", "abcxyz", "aaa@gmail.com", 2),
     ("usr00003", "asdfas", "asw@gmail.com", 1),
 	("usr00004", "wqtah", "aaa@gmail.com", 2),
