@@ -13,6 +13,7 @@ CREATE TABLE user(
     hashed_pw nvarchar(256),
     session_token text,
     register_date date,
+    team_info text,
     PRIMARY KEY(user_id)
 );
 
@@ -37,11 +38,29 @@ CREATE TABLE submission(
     FOREIGN KEY(prompt_id) REFERENCES prompts(prompt_id)
 );
 
+CREATE TABLE assigned_submissions(
+	grader_id int ,
+    submission_id int,
+    assigner_id int,
+    status smallint,
+    modified_date datetime,
+    comment text,
+    assigned_date datetime,
+    PRIMARY KEY(grader_id,submission_id),
+    FOREIGN KEY(grader_id) REFERENCES user(user_id),
+    FOREIGN KEY(submission_id) REFERENCES submission(submission_id),
+    FOREIGN KEY(assigner_id) REFERENCES user(user_id)
+);
+
 INSERT INTO user(username, name, email, group_id)
 VALUES
-	("adm0001", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
+	("adm00001", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
     ("usr00000", "team_name", "abc@gmail.com", 3),
-    ("usr00001", "team_name", "xyz@gmail.com", 3);
+    ("usr00001", "team_name", "xyz@gmail.com", 3),
+    ("usr00002", "abcxyz", "aaa@gmail.com", 2),
+    ("usr00003", "asdfas", "asw@gmail.com", 1),
+	("usr00004", "wqtah", "aaa@gmail.com", 2),
+    ("usr00005", "qwetasd", "aaa@gmail.com", 1);
     
 INSERT INTO prompts(team_id, prompt, image, submitted)
 VALUES
@@ -52,8 +71,12 @@ VALUES
     (3, "xyz", "b64", 0),
     (3, "qwerty", "b64", 0);
 
-/*INSERT INTO submission(prompt_id, video)
+INSERT INTO submission(prompt_id, video)
 VALUES
 	(1, "sample_url"),
-    (5, "sample_url");*/
-    
+    (5, "sample_url");
+
+INSERT INTO assigned_submissions(grader_id, assigner_id, submission_id, status, modified_date, assigned_date)
+VALUES
+	(4, 5, 1, 0, "2024-11-16", "2024-11-16"),
+    (6, 7, 2, 0, "2024-11-16", "2024-11-16");

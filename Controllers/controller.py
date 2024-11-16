@@ -58,3 +58,19 @@ def get_team_submission(team_id):
 def get_submission(submission_id):
     submission = db.GET_submission(submission_id)
     return submission
+
+def get_grader_assigned_submissions(grader_id):
+    assigned_submissions = db.GET_grader_assigned_submissions(grader_id)
+    return assigned_submissions
+
+def get_assigner_assigned_submissions(assigner_id):
+    assigned_submissions = db.GET_assigner_assigned_submissions(assigner_id)
+    return assigned_submissions
+
+def get_assigned_submission(submission_id):
+    assigned_submission = db.GET_assigned_submission(submission_id)
+    return assigned_submission
+    
+def get_all_assigned_submissions():
+    assigned_submissions = db.GET_all_assigned_submissions()
+    return assigned_submissions

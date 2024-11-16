@@ -88,6 +88,26 @@ class submission_read(Resource):
             return submission
         submissions = controller.get_all_submissions()
         return submissions
+    
+@api.route("/assigned_submissions", methods=['GET'])
+@api.param('grader_id')
+@api.param('submission_id')
+class assigned_submissions(Resource):
+    def get(self):
+        grader_id = request.args.get('grader_id')
+        assigner_id = request.args.get('assigner_id')
+        submission_id = request.args.get('submission_id')
+        if assigner_id:
+            assigned_submissions = controller.get_assigner_assigned_submissions(assigner_id)
+            return assigned_submissions
+        if grader_id:
+            assigned_submissions = controller.get_grader_assigned_submissions(grader_id)
+            return assigned_submissions
+        if submission_id:
+            assigned_submission = controller.get_assigned_submission(submission_id)
+            return assigned_submission
+        all_assigned_submissions = controller.get_all_assigned_submissions()
+        return all_assigned_submissions
         
 ### UPDATE ###
 
