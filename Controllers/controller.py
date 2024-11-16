@@ -1,4 +1,4 @@
-from DB import db
+from DAL import db
 from Helper import user
 
 ### CREATE ###
@@ -18,8 +18,6 @@ def create_user():
 def get_all_user():
     users = db.GET_all_users()
     return users
-
-
 
 def get_user(user_id):
     user = db.GET_user(user_id)
