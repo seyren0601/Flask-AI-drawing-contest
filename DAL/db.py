@@ -54,15 +54,15 @@ def CREATE_submission(prompt_id,submit_date,video,score):
     date_helper.query_date_to_string(submission)
     return submission
 
-def CREATE_assigned_submission(grader_id,submission_id,status,modified_date,comment,assigned_date,assigner_id):
+def CREATE_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id):
     query = """
-        INSERT INTO assigned_submissions (grader_id,submission_id,status,modified_date,comment,assigned_date,assigner_id)
-        VALUE (%s,%s,%s,%s,%s,%s,%s)
+        INSERT INTO assigned_submissions (submission_id, img_grader_id, video_grader_id, prompt_grader_id, status)
+        VALUE (%s,%s,%s,%s,%s)
     """
-    db_cursor.execute(query,(grader_id,submission_id,status,modified_date,comment,assigned_date,assigner_id))
+    db_cursor.execute(query,(submission_id, img_grader_id, video_grader_id, prompt_grader_id, 0))
     mysql_client.commit()
 
-    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE grader_id = {grader_id} AND submission_id = {submission_id}")
+    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}")
 
     assigned_submission = db_cursor.fetchall()
     date_helper.query_date_to_string(assigned_submission)

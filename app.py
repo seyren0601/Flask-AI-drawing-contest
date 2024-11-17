@@ -45,14 +45,18 @@ class submission_create(Resource):
 class submission_assigned(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("grader_id",type=int,required=True,location='json')
         parser.add_argument("submission_id",type=int,required=True,location='json')
-        parser.add_argument("assigner_id",type=int,required=True,location='json')
+        parser.add_argument("img_grader_id",type=int,required=True,location='json')
+        parser.add_argument("video_grader_id",type=int,required=True,location='json')
+        parser.add_argument("prompt_grader_id",type=int,required=True,location='json')
+
         argument = parser.parse_args()
-        grader_id = argument["grader_id"]
         submission_id = argument["submission_id"]
-        assigner_id = argument["assigner_id"]
-        assigned_submission = controller.create_assigned_submission(grader_id,submission_id,assigner_id)
+        img_grader_id = argument["img_grader_id"]
+        video_grader_id = argument["video_grader_id"]
+        prompt_grader_id = argument["prompt_grader_id"]
+
+        assigned_submission = controller.create_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id)
         return assigned_submission
 ### READ ###
 @api.route("/user", methods=['GET'])
