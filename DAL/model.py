@@ -16,7 +16,7 @@ client = OpenAI(
 )
 
 MODEL = "dall-e-3"
-SIZE = "1024x1024"
+SIZE = "512x512"
 QUALITY="standard"
 
 def image_generate(prompt):
