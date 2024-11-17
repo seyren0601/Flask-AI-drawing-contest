@@ -13,6 +13,30 @@ def create_user():
     new_user = db.CREATE_user(username,group_id,salt,hashed_pw,date_string)    
     return {'user_id':new_user['user_id'],'username':new_user['username'], 'password':password}
 
+def create_user_v2(name,school_name,grade,phone_number,email,team_info):
+    username = f"usr{len(db.GET_all_users()):05}"    
+    password = user.random_password()
+    group_id = 2
+    salt , hashed_pw = user.hash_password(password)
+    current_date = datetime.now()
+    date_string = f"{current_date.year}-{current_date.month}-{current_date.day}"
+
+    insert_data ={
+        "username": username,
+        "group_id": group_id,
+        "salt": salt,
+        "hashed_pw": hashed_pw,
+        "register_date":date_string,
+        "name":name,
+        "school_name":school_name,
+        "grade":grade,
+        "phone_number":phone_number,
+        "email":email,
+        "team_info": team_info
+    }
+    new_user = db.CREATE_user_v2(insert_data)
+    return {'user_id':new_user['user_id'],'username':new_user['username'], 'password':password}
+
 def create_prompt(team_id,prompt):
     image = model.image_generate(prompt)
     date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -66,7 +90,7 @@ def user_authenticate(username, password):
     
     user_id = user_authentication['user_id']
     group_id = user_authentication['group_id']
-    print(f"Login hashed_pw: {user.hash_password(password, salt)[1]}")      
+    # print(f"Login hashed_pw: {user.hash_password(password, salt)[1]}")      
     if user.hash_password(password, salt)[1] == hashed_pw:        
         return user_id,group_id
 

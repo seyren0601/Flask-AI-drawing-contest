@@ -32,7 +32,27 @@ def CREATE_user(username,group_id,salt,hashed_pw,date_string):
     user = db_cursor.fetchall()    
     user = date_helper.query_date_to_string(user)
     return user[0]
-    
+
+def CREATE_user_v2(insert_data):
+    params = []
+    inserts = []
+    for key , value in insert_data.items():
+        if value is not None:
+            inserts.append(f"{key}")
+            params.append(value)    
+
+    query = f"""
+        INSERT INTO user ({', '.join(inserts)})
+        VALUES ({','.join(['%s'] * len(params))})
+    """
+    db_cursor.execute(query,tuple(params))
+    mysql_client.commit()
+   
+    db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")    
+    user = db_cursor.fetchall()    
+    user = date_helper.query_date_to_string(user)
+    return user[0]
+
 def CREATE_prompt(team_id,date_time,prompt,image,submitted):
     query = """
         INSERT INTO prompts (team_id,date_time,prompt,image,submitted)
@@ -184,8 +204,7 @@ def UPDATE_user(user_id, update_data):
                 SET {', '.join(updates)}
                 WHERE user_id = %s"""
     db_cursor.execute(query,tuple(params))
-    mysql_client.commit()
-    print("User updated successfully.")
+    mysql_client.commit()    
 
 def UPDATE_prompt(prompt_id):
     db_cursor.execute(f"UPDATE prompts SET submitted = 1 WHERE prompt_id = {prompt_id}")

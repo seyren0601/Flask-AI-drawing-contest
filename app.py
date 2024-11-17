@@ -11,11 +11,32 @@ api = Api(app)
 CORS(app)
 
 ### CREATE ###
-@api.route("/user/create",methods = ['GET'])
+@api.route("/user/create",methods = ['GET','POST'])
 class user_create(Resource):
     def get(self):
         user = controller.create_user()
         return user
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name',type=str,required=True,location='json')
+        parser.add_argument('school_name',type=str,required=False,location='json')
+        parser.add_argument('grade',type=str,required=False,location='json')
+        parser.add_argument('phone_number',type=str,required=True,location='json')
+        parser.add_argument('email',type=str,required=True,location='json')
+        parser.add_argument('team_info',type=str,required=True,location='json')
+
+        argument = parser.parse_args()
+
+        name = argument['name']
+        school_name = argument['school_name']
+        grade = argument['grade']
+        phone_number = argument['phone_number']
+        email = argument['email']
+        team_info = argument['team_info']
+
+        user = controller.create_user_v2(name,school_name,grade,phone_number,email,team_info)
+        return user
+
 
 @api.route("/prompt/create",methods=['POST'])
 class prompt_create(Resource):
@@ -188,7 +209,6 @@ class assigned_submission_update(Resource):
         parser.add_argument('img_comment', type=str,required=False,location='json', default="")
         parser.add_argument('video_comment', type=str,required=False,location='json', default="")
         parser.add_argument('prompt_comment', type=str,required=False,location='json', default="")
-
         
         argument = parser.parse_args()
         
@@ -199,7 +219,6 @@ class assigned_submission_update(Resource):
         img_comment = argument['img_comment']
         video_comment = argument['video_comment']
         prompt_comment = argument['prompt_comment']
-
         try:
             controller.update_assigned_submission(submission_id, img_score, video_score, prompt_score, img_comment, video_comment, prompt_comment)
         except ValueError:
