@@ -31,7 +31,7 @@ def CREATE_user(username,group_id,salt,hashed_pw,date_string):
     db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")    
     user = db_cursor.fetchall()    
     user = date_helper.query_date_to_string(user)
-    return user
+    return user[0]
     
 def CREATE_prompt(team_id,date_time,prompt,image,submitted):
     query = """

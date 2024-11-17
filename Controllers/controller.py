@@ -3,6 +3,7 @@ from Helper import user
 from datetime import datetime
 ### CREATE ###
 def create_user():
+    
     username = f"usr{len(db.GET_all_users()):05}"    
     password = user.random_password()
     group_id = 2
