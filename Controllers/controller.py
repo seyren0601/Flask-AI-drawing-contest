@@ -30,6 +30,19 @@ def create_submission(prompt_id,video):
 def create_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id):
     assigned_submission = db.CREATE_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id)
     return assigned_submission
+
+def execute_query(query):   
+    match query.split():
+        case ["SELECT", *rest]:
+            result = db.execute_select(query)        
+        case ["INSERT", *rest]:
+            result = db.execute_insert(query)    
+        case ["UPDATE", *rest]:
+            result = db.execute_update(query)         
+        # case ["DELETE", *rest]:
+        #     result = "DELETE in query"
+    return result            
+            
 ### READ ###
 def get_all_user():
     users = db.GET_all_users()

@@ -197,3 +197,34 @@ def UPDATE_assigned_submission(submission_id, status, comment, score, update_tim
                             WHERE submission_id = {submission_id}""")
     mysql_client.commit()
 
+### Custom query ###
+def execute_select(query):
+    try:
+        db_cursor.execute(query)
+        res = db_cursor.fetchall()        
+    except Exception as e:
+        return {"error": str(e)},401
+    return res
+
+def execute_insert(query):
+    try:
+        db_cursor.execute(query)
+        mysql_client.commit()
+        res = "Insert success"        
+    except Exception as e:
+        return {"error": str(e)},401
+    return res
+
+def execute_update(query):
+    try:
+        db_cursor.execute(query)
+        mysql_client.commit()
+        row = db_cursor.rowcount
+        if row > 0:
+            res = "Update success"
+        else:
+            res = "Update failed"        
+    except Exception as e:
+        return {"error": str(e)},401
+    return res
+###################################

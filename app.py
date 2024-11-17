@@ -58,6 +58,7 @@ class submission_assigned(Resource):
 
         assigned_submission = controller.create_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id)
         return assigned_submission
+
 ### READ ###
 @api.route("/user", methods=['GET'])
 @api.param('user_id')
@@ -139,7 +140,16 @@ class assigned_submissions(Resource):
             return assigned_submission
         all_assigned_submissions = controller.get_all_assigned_submissions()
         return all_assigned_submissions
-        
+
+@api.route("/query",methods=["POST"])
+class query(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('query',type=str,required=True,location='json')
+        argument = parser.parse_args()
+        query = argument['query']
+        data = controller.execute_query(query)
+        return data   
 ### UPDATE ###
 @api.route("/user/update",methods=["POST"])
 class user_update(Resource):
