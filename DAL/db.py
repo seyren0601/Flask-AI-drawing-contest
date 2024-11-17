@@ -55,12 +55,14 @@ def CREATE_user_v2(insert_data):
     return user[0]
 
 def CREATE_prompt(team_id,date_time,prompt,image,submitted):
-    query = """
-        INSERT INTO prompts (team_id,date_time,prompt,image,submitted)
-        VALUE (%s,%s,%s,%s,%s)
-    """
-    db_cursor.execute(query,(team_id,date_time,prompt,image,submitted))
-    mysql_client.commit()
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client) 
+        query = """ 
+            INSERT INTO prompts (team_id,date_time,prompt,image,submitted)
+            VALUE (%s,%s,%s,%s,%s)
+        """
+        db_cursor.execute(query,(team_id,date_time,prompt,image,submitted))
+        mysql_client.commit()
 
 def CREATE_submission(prompt_id,submit_date,video,assigned):
     query = """
@@ -184,13 +186,15 @@ def GET_submission(submission_id):
     return res
 
 def GET_team_submission(team_id):
-    db_cursor.execute(f"""SELECT submission_id, submission.prompt_id, submit_date, video
-                            FROM submission INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
-                            WHERE prompts.team_id = {team_id}""")
-    res = db_cursor.fetchall()
-    
-    res = date_helper.query_date_to_string(res)
-    return res
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        db_cursor.execute(f"""SELECT submission_id, submission.prompt_id, submit_date, video
+                                FROM submission INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
+                                WHERE prompts.team_id = {team_id}""")
+        res = db_cursor.fetchall()
+        
+        res = date_helper.query_date_to_string(res)
+        return res
 
 def GET_grader_assigned_submissions(grader_id):
     db_cursor.execute(f"""SELECT * 
