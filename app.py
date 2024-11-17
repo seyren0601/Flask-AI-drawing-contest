@@ -62,11 +62,16 @@ class submission_assigned(Resource):
 ### READ ###
 @api.route("/user", methods=['GET'])
 @api.param('user_id')
+@api.param('group_id')
 class user_read(Resource):
     def get(self):
         user_id = request.args.get('user_id')
+        group_id = request.args.get('group_id')
         if user_id:
             user = controller.get_user(user_id)
+            return user
+        elif group_id : 
+            user = controller.get_user_by_group(group_id)
             return user
         else:
             users = controller.get_all_user()

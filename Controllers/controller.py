@@ -15,8 +15,7 @@ def create_user():
 def create_prompt(team_id,prompt):
     image = model.image_generate(prompt)
     date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    submitted = 0
-    
+    submitted = 0    
     db.CREATE_prompt(team_id,date_time,prompt,image,submitted)
     return image
 
@@ -50,6 +49,10 @@ def get_all_user():
 
 def get_user(user_id):
     user = db.GET_user(user_id)    
+    return user
+
+def get_user_by_group(group_id):
+    user = db.Get_user_by_group(group_id)
     return user
 
 def user_authenticate(username, password):
@@ -115,8 +118,7 @@ def update_user(user_id,name,username,email,phonenumber,new_password,team_info):
     salt = current_user['salt'].encode("utf-8")
     if new_password:      
         hashed_pw = user.hash_password(new_password,salt)[1]  
-        print(f"Update hashed_pw: {hashed_pw}")                    
-        
+        print(f"Update hashed_pw: {hashed_pw}")                            
     else:        
         hashed_pw = current_user['hashed_pw']
     update_data = {
