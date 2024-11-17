@@ -77,7 +77,10 @@ class submission_assigned(Resource):
         video_grader_id = argument["video_grader_id"]
         prompt_grader_id = argument["prompt_grader_id"]
 
-        assigned_submission = controller.create_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id)
+        assigned_submission = controller.create_assigned_submission(submission_id=submission_id, 
+                                                                    img_grader_id=img_grader_id, 
+                                                                    video_grader_id=video_grader_id, 
+                                                                    prompt_grader_id=prompt_grader_id)
         return assigned_submission
     
     def get(self):

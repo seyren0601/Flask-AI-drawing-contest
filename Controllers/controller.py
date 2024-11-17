@@ -1,10 +1,11 @@
 from DAL import db,model
 from Helper import user
 from datetime import datetime
+import time
 ### CREATE ###
 def create_user():
-    
-    username = f"usr{len(db.GET_all_users()):05}"    
+    unix_now = time.time()
+    username = f"usr" + str(int(unix_now))[-1:-3:-1] + str(unix_now % 1)[2:5]
     password = user.random_password()
     group_id = 2
     salt , hashed_pw = user.hash_password(password)
@@ -14,7 +15,8 @@ def create_user():
     return {'user_id':new_user['user_id'],'username':new_user['username'], 'password':password}
 
 def create_user_v2(name,school_name,grade,phone_number,email,team_info):
-    username = f"usr{len(db.GET_all_users()):05}"    
+    unix_now = time.time()
+    username = f"usr" + str(int(unix_now))[-1:-4:-1] + str(unix_now % 1)[2:5]
     password = user.random_password()
     group_id = 2
     salt , hashed_pw = user.hash_password(password)
@@ -51,16 +53,16 @@ def create_submission(prompt_id,video):
     prompt = db.UPDATE_prompt(prompt_id)
     return submission
 
-def create_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id):
-    assigned_submission = db.CREATE_assigned_submission(submission_id=submission_id, 
-                                                        img_grader_id=img_grader_id, 
-                                                        video_grader_id=video_grader_id, 
-                                                        prompt_grader_id=prompt_grader_id)
-    return assigned_submission
-
-def create_assigned_submission():
-    assigned_submissions = db.CREATE_assigned_submission()
-    return assigned_submissions
+def create_assigned_submission(**kwargs):
+    if len(kwargs.items()) > 0:
+        assigned_submission = db.CREATE_assigned_submission(submission_id=kwargs['submission_id'], 
+                                                            img_grader_id=kwargs['img_grader_id'], 
+                                                            video_grader_id=kwargs['video_grader_id'], 
+                                                            prompt_grader_id=kwargs['prompt_grader_id'])
+        return assigned_submission
+    else:
+        assigned_submissions = db.CREATE_assigned_submission()
+        return assigned_submissions
 
 def execute_query(query):   
     match query.split():
