@@ -134,15 +134,9 @@ def GET_team_submission(team_id):
     return res
 
 def GET_grader_assigned_submissions(grader_id):
-    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE grader_id = {grader_id}")
-    
-    res = db_cursor.fetchall()
-    
-    res = date_helper.query_date_to_string(res)
-    return res
-
-def GET_assigner_assigned_submissions(assigner_id):
-    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE assinger_id = {assigner_id}")
+    db_cursor.execute(f"""SELECT * 
+                        FROM assigned_submissions 
+                        WHERE img_grader_id = {grader_id} OR video_grader_id = {grader_id} OR prompt_grader_id = {grader_id}""")
     
     res = db_cursor.fetchall()
     

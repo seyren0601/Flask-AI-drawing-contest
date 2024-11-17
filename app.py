@@ -126,12 +126,8 @@ class submission_read(Resource):
 @api.param('submission_id')
 class assigned_submissions(Resource):
     def get(self):
-        grader_id = request.args.get('grader_id')
-        assigner_id = request.args.get('assigner_id')
         submission_id = request.args.get('submission_id')
-        if assigner_id:
-            assigned_submissions = controller.get_assigner_assigned_submissions(assigner_id)
-            return assigned_submissions
+        grader_id = request.args.get('grader_id')
         if grader_id:
             assigned_submissions = controller.get_grader_assigned_submissions(grader_id)
             return assigned_submissions

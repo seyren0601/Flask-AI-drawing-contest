@@ -95,10 +95,6 @@ def get_grader_assigned_submissions(grader_id):
     assigned_submissions = db.GET_grader_assigned_submissions(grader_id)
     return assigned_submissions
 
-def get_assigner_assigned_submissions(assigner_id):
-    assigned_submissions = db.GET_assigner_assigned_submissions(assigner_id)
-    return assigned_submissions
-
 def get_assigned_submission(submission_id):
     assigned_submission = db.GET_assigned_submission(submission_id)
     return assigned_submission
