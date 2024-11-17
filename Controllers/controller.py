@@ -34,6 +34,19 @@ def create_assigned_submission(grader_id,submission_id,assigner_id):
     comment = None
     assigned_submission = db.CREATE_assigned_submission(grader_id,submission_id,status,modified_date,comment,assigned_date,assigner_id)
     return assigned_submission
+
+def execute_query(query):   
+    match query.split():
+        case ["SELECT", *rest]:
+            result = db.execute_select(query)        
+        case ["INSERT", *rest]:
+            result = db.execute_insert(query)    
+        case ["UPDATE", *rest]:
+            result = db.execute_update(query)         
+        # case ["DELETE", *rest]:
+        #     result = "DELETE in query"
+    return result            
+            
 ### READ ###
 def get_all_user():
     users = db.GET_all_users()
