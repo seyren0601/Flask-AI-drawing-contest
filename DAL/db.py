@@ -28,17 +28,26 @@ def init_cursor(client):
     return db_cursor
 
 ### CREATE ###
-def CREATE_user(username,group_id,salt,hashed_pw,date_string):
+def CREATE_user(group_id,salt,hashed_pw,date_string):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         query = """
-            INSERT INTO user (username, group_id,salt, hashed_pw, register_date)
-            VALUES (%s, %s, %s,%s, %s)
+            INSERT INTO user (group_id,salt, hashed_pw, register_date)
+            VALUES (%s, %s,%s, %s)
         """
-        db_cursor.execute(query,(username,group_id,salt,hashed_pw,date_string))
+        db_cursor.execute(query, (group_id,salt,hashed_pw,date_string))
         mysql_client.commit()
     
         db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")    
+        user = db_cursor.fetchall()    
+        user = date_helper.query_date_to_string(user)[0]
+        user_id = user['user_id']
+        username = "usr" + str(user_id).zfill(5)
+        
+        db_cursor.execute(f"UPDATE user SET username=\"{username}\" WHERE user_id = {user_id}")
+        mysql_client.commit()
+        
+        db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
         user = db_cursor.fetchall()    
         user = date_helper.query_date_to_string(user)
         return user[0]
@@ -59,8 +68,17 @@ def CREATE_user_v2(insert_data):
         """
         db_cursor.execute(query,tuple(params))
         mysql_client.commit()
-    
+        
         db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")    
+        user = db_cursor.fetchall()    
+        user = date_helper.query_date_to_string(user)[0]
+        user_id = user['user_id']
+        username = "usr" + str(user_id).zfill(5)
+        
+        db_cursor.execute(f"UPDATE user SET username=\"{username}\" WHERE user_id = {user_id}")
+        mysql_client.commit()
+    
+        db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")    
         user = db_cursor.fetchall()    
         user = date_helper.query_date_to_string(user)
         return user[0]

@@ -4,19 +4,15 @@ from datetime import datetime
 import time
 ### CREATE ###
 def create_user():
-    unix_now = time.time()
-    username = f"usr" + str(int(unix_now))[-1:-3:-1] + str(unix_now % 1)[2:5]
     password = user.random_password()
     group_id = 2
     salt , hashed_pw = user.hash_password(password)
     current_date = datetime.now()
     date_string = f"{current_date.year}-{current_date.month}-{current_date.day}"
-    new_user = db.CREATE_user(username,group_id,salt,hashed_pw,date_string)    
+    new_user = db.CREATE_user(group_id,salt,hashed_pw,date_string)    
     return {'user_id':new_user['user_id'],'username':new_user['username'], 'password':password}
 
 def create_user_v2(name,school_name,grade,phone_number,email,team_info):
-    unix_now = time.time()
-    username = f"usr" + str(int(unix_now))[-1:-4:-1] + str(unix_now % 1)[2:5]
     password = user.random_password()
     group_id = 2
     salt , hashed_pw = user.hash_password(password)
@@ -24,7 +20,6 @@ def create_user_v2(name,school_name,grade,phone_number,email,team_info):
     date_string = f"{current_date.year}-{current_date.month}-{current_date.day}"
 
     insert_data ={
-        "username": username,
         "group_id": group_id,
         "salt": salt,
         "hashed_pw": hashed_pw,
@@ -100,7 +95,7 @@ def user_authenticate(username, password):
     user_id = user_authentication['user_id']
     group_id = user_authentication['group_id']
     # print(f"Login hashed_pw: {user.hash_password(password, salt)[1]}")      
-    if user.hash_password(password, salt)[1] == hashed_pw:        
+    if user.hash_password(password, salt)[1] == hashed_pw:
         return user_id,group_id
 
     return None
