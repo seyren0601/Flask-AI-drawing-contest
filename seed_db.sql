@@ -6,8 +6,6 @@ CREATE TABLE user(
 	user_id int auto_increment,
     name nvarchar(256),
     username nvarchar(128) unique,
-    school_name nvarchar(256),
-    grade nvarchar(256),
     email nvarchar(256),
     phone_number nvarchar(256),
     group_id tinyint,
@@ -69,6 +67,9 @@ VALUES
     ("usr00004", "qwetasd", "aaa@gmail.com", 1),
     ("usr00005", "skwoiyjkj", "aaa@gmail.com", 1);
     
+INSERT INTO user(username, group_id, salt, hashed_pw)
+VALUES("usr00006", 2, "$2b$12$BZyS/bsY816Aw5tZADVMLe", "$2b$12$BZyS/bsY816Aw5tZADVMLeSGEklXB2346NneyjXEPN/CcRXjcslou");
+    
 INSERT INTO prompts(team_id, prompt, image, submitted)
 VALUES
 	(2, "abc", "b64", 1),
@@ -80,10 +81,15 @@ VALUES
 
 INSERT INTO submission(prompt_id, video, assigned)
 VALUES
-	(1, "sample_url", 1),
-    (5, "sample_url", 1);
+	(1, "sample_url", 0),
+    (5, "sample_url", 0);
+
+-- INSERT INTO submission(prompt_id, video, assigned)
+-- VALUES
+-- 	(1, "sample_url", 1),
+--     (5, "sample_url", 1);
 
 INSERT INTO assigned_submissions(submission_id, img_grader_id, video_grader_id, prompt_grader_id, status)
 VALUES
 	(1, 3, 5, 6, 0),
-    (2, 3, 5, 6, 0);
+    (2, 3, 3, 6, 0);
