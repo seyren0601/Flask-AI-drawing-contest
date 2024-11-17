@@ -28,10 +28,10 @@ def CREATE_user(username,group_id,salt,hashed_pw,date_string):
     db_cursor.execute(query,(username,group_id,salt,hashed_pw,date_string))
     mysql_client.commit()
    
-    db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")
-    user = db_cursor.fetchall()
-
-    return user[0]
+    db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")    
+    user = db_cursor.fetchall()    
+    user = date_helper.query_date_to_string(user)
+    return user
     
 def CREATE_prompt(team_id,date_time,prompt,image,submitted):
     query = """
@@ -72,6 +72,7 @@ def CREATE_assigned_submission(submission_id, img_grader_id, video_grader_id, pr
 def GET_all_users():
     db_cursor.execute("SELECT * FROM user")
     res = db_cursor.fetchall()
+    res = date_helper.query_date_to_string(res)
     return res
     
 def GET_user(user_id):
