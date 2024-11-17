@@ -81,7 +81,7 @@ def GET_user(user_id):
     return res
 
 def GET_user_authentication(username):
-    db_cursor.execute(f"SELECT user_id, salt, hashed_pw FROM user WHERE username = \"{username}\"")
+    db_cursor.execute(f"SELECT user_id,group_id, salt, hashed_pw FROM user WHERE username = \"{username}\"")
     res = db_cursor.fetchall()
     
     return res

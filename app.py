@@ -82,9 +82,9 @@ class user_login(Resource):
         
         username = arguments['username']
         password = arguments['password']
-        user_id = controller.user_authenticate(username, password)
-        if user_id:
-            return {'user_id':user_id}
+        user_id,group_id = controller.user_authenticate(username, password)
+        if user_id and group_id:
+            return {'user_id':user_id,'group_id':group_id}
         else:
             return Response(status=401, response="Failed Authentication")
     

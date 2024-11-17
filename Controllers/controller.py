@@ -61,9 +61,10 @@ def user_authenticate(username, password):
     hashed_pw = user_authentication['hashed_pw'].encode('utf-8')
     
     user_id = user_authentication['user_id']
+    group_id = user_authentication['group_id']
     print(f"Login hashed_pw: {user.hash_password(password, salt)[1]}")      
     if user.hash_password(password, salt)[1] == hashed_pw:        
-        return user_id
+        return user_id,group_id
 
     return None
 
