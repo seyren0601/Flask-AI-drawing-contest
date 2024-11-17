@@ -60,6 +60,9 @@ def CREATE_assigned_submission(submission_id, img_grader_id, video_grader_id, pr
         VALUE (%s,%s,%s,%s,%s)
     """
     db_cursor.execute(query,(submission_id, img_grader_id, video_grader_id, prompt_grader_id, 0))
+
+    query = f"UPDATE submission SET assigned = 1 WHERE submission_id = {submission_id}"
+    db_cursor.execute(query)
     mysql_client.commit()
 
     db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}")
@@ -141,15 +144,9 @@ def GET_team_submission(team_id):
     return res
 
 def GET_grader_assigned_submissions(grader_id):
-    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE grader_id = {grader_id}")
-    
-    res = db_cursor.fetchall()
-    
-    res = date_helper.query_date_to_string(res)
-    return res
-
-def GET_assigner_assigned_submissions(assigner_id):
-    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE assinger_id = {assigner_id}")
+    db_cursor.execute(f"""SELECT * 
+                        FROM assigned_submissions 
+                        WHERE img_grader_id = {grader_id} OR video_grader_id = {grader_id} OR prompt_grader_id = {grader_id}""")
     
     res = db_cursor.fetchall()
     
@@ -194,14 +191,41 @@ def UPDATE_prompt(prompt_id):
     db_cursor.execute(f"UPDATE prompts SET submitted = 1 WHERE prompt_id = {prompt_id}")
     mysql_client.commit()
     
-def UPDATE_assigned_submission(submission_id, status, comment, score, update_time):
-    db_cursor.execute(f"""UPDATE assigned_submissions
-                            SET status = {status}, comment = \"{comment}\", modified_date = \"{update_time}\"
-                            WHERE submission_id = {submission_id}""")
+def UPDATE_assigned_submission(submission_id, params:dict, update_time):
+    sql = f"""SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}"""
+    db_cursor.execute(sql)
+    res = db_cursor.fetchall()
+    obj_before_grade = date_helper.query_date_to_string(res)[0]
+    if obj_before_grade['status']:
+        raise PermissionError()
+
+
+    sql = """UPDATE assigned_submissions
+                            SET """
+    for key,value in params.items():
+        if value:
+            if not obj_before_grade[key]:
+                if type(value) == str:
+                    sql += f" {key} = \"{value}\","
+                else:
+                    sql += f" {key} = {value},"
+            else:
+                raise ValueError()
+
+    sql += f"modified_date = \"{update_time}\" "
+    sql += f"WHERE submission_id = {submission_id}"
+    db_cursor.execute(sql)
     
-    db_cursor.execute(f"""UPDATE submission
-                            SET score = {score}
-                            WHERE submission_id = {submission_id}""")
+
+    sql = f"""SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}"""
+    db_cursor.execute(sql)
+    res = db_cursor.fetchall()
+    obj_after_grade = date_helper.query_date_to_string(res)[0]
+    if obj_after_grade['img_score'] and obj_after_grade['video_score'] and ['prompt_score']:
+        sql = f"""UPDATE assigned_submissions
+                SET status = 1
+                WHERE submission_id = {submission_id}"""
+        db_cursor.execute(sql)
     mysql_client.commit()
 
 ### Custom query ###

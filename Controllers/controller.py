@@ -100,10 +100,6 @@ def get_grader_assigned_submissions(grader_id):
     assigned_submissions = db.GET_grader_assigned_submissions(grader_id)
     return assigned_submissions
 
-def get_assigner_assigned_submissions(assigner_id):
-    assigned_submissions = db.GET_assigner_assigned_submissions(assigner_id)
-    return assigned_submissions
-
 def get_assigned_submission(submission_id):
     assigned_submission = db.GET_assigned_submission(submission_id)
     return assigned_submission
@@ -132,9 +128,17 @@ def update_user(user_id,name,username,email,phonenumber,new_password,team_info):
     }
     db.UPDATE_user(user_id,update_data)
 
-def update_assigned_submission(submission_id, status, comment, score):
+def update_assigned_submission(submission_id, img_score, video_score, prompt_score, img_comment, video_comment, prompt_comment):
     update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    db.UPDATE_assigned_submission(submission_id, status, comment, score, update_time)
+    params = {
+        "img_score":img_score, 
+        "video_score":video_score, 
+        "prompt_score":prompt_score, 
+        "img_comment":img_comment,
+        "video_comment":video_comment,
+        "prompt_comment":prompt_comment
+    }
+    db.UPDATE_assigned_submission(submission_id, params, update_time)
 
 
 ### DELETE ###
