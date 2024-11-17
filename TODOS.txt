@@ -1,6 +1,10 @@
-3. endpoint hủy 1 phân công và endpoint hủy tất cả phân công chưa có kết quả
+1. Refactor /user/update to include new fields:
+	+ schoool_name
+	+ grade
 
-4. BE Authentication:
+2. endpoint hủy 1 phân công và endpoint hủy tất cả phân công chưa có kết quả
+
+3. BE Authentication:
 - When FE calls BE API, they must provide a session_token in request header
 - This session token is then matched with user list to find a user with correspond token
 -> Get this user group_id
