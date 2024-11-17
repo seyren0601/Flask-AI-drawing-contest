@@ -195,7 +195,13 @@ class assigned_submission_update(Resource):
         video_comment = argument['video_comment']
         prompt_comment = argument['prompt_comment']
 
-        controller.update_assigned_submission(submission_id, img_score, video_score, prompt_score, img_comment, video_comment, prompt_comment)
+        try:
+            controller.update_assigned_submission(submission_id, img_score, video_score, prompt_score, img_comment, video_comment, prompt_comment)
+        except ValueError:
+            return Response(status=400, response="Grade already exists")
+        except PermissionError:
+            return Response(status=400, response="Submission already graded")
+        
         
         return Response(status=200)
 

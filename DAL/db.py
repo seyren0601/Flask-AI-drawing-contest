@@ -60,6 +60,9 @@ def CREATE_assigned_submission(submission_id, img_grader_id, video_grader_id, pr
         VALUE (%s,%s,%s,%s,%s)
     """
     db_cursor.execute(query,(submission_id, img_grader_id, video_grader_id, prompt_grader_id, 0))
+
+    query = f"UPDATE submission SET assigned = 1 WHERE submission_id = {submission_id}"
+    db_cursor.execute(query)
     mysql_client.commit()
 
     db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}")
@@ -181,14 +184,41 @@ def UPDATE_prompt(prompt_id):
     db_cursor.execute(f"UPDATE prompts SET submitted = 1 WHERE prompt_id = {prompt_id}")
     mysql_client.commit()
     
-def UPDATE_assigned_submission(submission_id, **kwargs):
+def UPDATE_assigned_submission(submission_id, params:dict, update_time):
+    sql = f"""SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}"""
+    db_cursor.execute(sql)
+    res = db_cursor.fetchall()
+    obj_before_grade = date_helper.query_date_to_string(res)[0]
+    if obj_before_grade['status']:
+        raise PermissionError()
+
+
     sql = """UPDATE assigned_submissions
                             SET """
-    for key,value in kwargs:
-        sql += f"{key} = {value}"
+    for key,value in params.items():
+        if value:
+            if not obj_before_grade[key]:
+                if type(value) == str:
+                    sql += f" {key} = \"{value}\","
+                else:
+                    sql += f" {key} = {value},"
+            else:
+                raise ValueError()
 
+    sql += f"modified_date = \"{update_time}\" "
     sql += f"WHERE submission_id = {submission_id}"
-    db_cursor.execute()
+    db_cursor.execute(sql)
+    
+
+    sql = f"""SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}"""
+    db_cursor.execute(sql)
+    res = db_cursor.fetchall()
+    obj_after_grade = date_helper.query_date_to_string(res)[0]
+    if obj_after_grade['img_score'] and obj_after_grade['video_score'] and ['prompt_score']:
+        sql = f"""UPDATE assigned_submissions
+                SET status = 1
+                WHERE submission_id = {submission_id}"""
+        db_cursor.execute(sql)
     mysql_client.commit()
 
 ### Custom query ###

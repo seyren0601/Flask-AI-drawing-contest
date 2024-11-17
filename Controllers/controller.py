@@ -134,7 +134,7 @@ def update_assigned_submission(submission_id, img_score, video_score, prompt_sco
         "video_comment":video_comment,
         "prompt_comment":prompt_comment
     }
-    db.UPDATE_assigned_submission(submission_id, params)
+    db.UPDATE_assigned_submission(submission_id, params, update_time)
 
 
 ### DELETE ###
