@@ -62,12 +62,12 @@ def CREATE_prompt(team_id,date_time,prompt,image,submitted):
     db_cursor.execute(query,(team_id,date_time,prompt,image,submitted))
     mysql_client.commit()
 
-def CREATE_submission(prompt_id,submit_date,video,score):
+def CREATE_submission(prompt_id,submit_date,video,assigned):
     query = """
-        INSERT INTO submission (prompt_id,submit_date,video,score)
+        INSERT INTO submission (prompt_id,submit_date,video,assigned)
         VALUE (%s,%s,%s,%s)
     """
-    db_cursor.execute(query,(prompt_id,submit_date,video,score))
+    db_cursor.execute(query,(prompt_id,submit_date,video,assigned))
     mysql_client.commit()
 
     db_cursor.execute(f"SELECT * FROM submission WHERE submission_id = {db_cursor.lastrowid}")
@@ -184,7 +184,7 @@ def GET_submission(submission_id):
     return res
 
 def GET_team_submission(team_id):
-    db_cursor.execute(f"""SELECT submission_id, submission.prompt_id, submit_date, video, score
+    db_cursor.execute(f"""SELECT submission_id, submission.prompt_id, submit_date, video
                             FROM submission INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
                             WHERE prompts.team_id = {team_id}""")
     res = db_cursor.fetchall()

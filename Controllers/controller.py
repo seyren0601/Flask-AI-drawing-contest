@@ -45,9 +45,9 @@ def create_prompt(team_id,prompt):
     return image
 
 def create_submission(prompt_id,video):
-    date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    score = None
-    submission = db.CREATE_submission(prompt_id,date_time,video,score)
+    date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  
+    assigned = 0  
+    submission = db.CREATE_submission(prompt_id,date_time,video,assigned)    
     prompt = db.UPDATE_prompt(prompt_id)
     return submission
 
