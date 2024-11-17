@@ -33,48 +33,55 @@ CREATE TABLE submission(
     prompt_id int,
     submit_date datetime,
     video varchar(256),
-    score float,
+    assigned boolean,
     PRIMARY KEY(submission_id),
     FOREIGN KEY(prompt_id) REFERENCES prompts(prompt_id)
 );
 
 CREATE TABLE assigned_submissions(
-	grader_id int ,
     submission_id int,
-    assigner_id int,
-    status smallint,
+    img_grader_id int,
+    video_grader_id int,
+    prompt_grader_id int,
+    img_comment text,
+    video_comment text,
+    prompt_comment text,
+    img_score float,
+    video_score float,
+    prompt_score float,
+    status boolean,
     modified_date datetime,
-    comment text,
-    assigned_date datetime,
-    PRIMARY KEY(grader_id,submission_id),
-    FOREIGN KEY(grader_id) REFERENCES user(user_id),
+    PRIMARY KEY(submission_id, img_grader_id, video_grader_id, prompt_grader_id),
     FOREIGN KEY(submission_id) REFERENCES submission(submission_id),
-    FOREIGN KEY(assigner_id) REFERENCES user(user_id)
+	FOREIGN KEY(img_grader_id) REFERENCES user(user_id),
+    FOREIGN KEY(video_grader_id) REFERENCES user(user_id),
+    FOREIGN KEY(prompt_grader_id) REFERENCES user(user_id)
 );
 
 INSERT INTO user(username, name, email, group_id)
 VALUES
-	("adm00001", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
-    ("usr00002", "abcxyz", "aaa@gmail.com", 2),
-    ("usr00003", "asdfas", "asw@gmail.com", 1),
-	("usr00004", "wqtah", "aaa@gmail.com", 2),
-    ("usr00005", "qwetasd", "aaa@gmail.com", 1);
+	("usr00000", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
+    ("usr00001", "abcxyz", "aaa@gmail.com", 2),
+    ("usr00002", "asdfas", "asw@gmail.com", 1),
+	("usr00003", "wqtah", "aaa@gmail.com", 2),
+    ("usr00004", "qwetasd", "aaa@gmail.com", 1),
+    ("usr00005", "skwoiyjkj", "aaa@gmail.com", 1);
     
 INSERT INTO prompts(team_id, prompt, image, submitted)
 VALUES
-	(2, "abc", "b64", 0),
+	(2, "abc", "b64", 1),
     (2, "xyz", "b64", 0),
     (2, "qwerty", "b64", 0),
     (3, "abc", "b64", 0),
-    (3, "xyz", "b64", 0),
+    (3, "xyz", "b64", 1),
     (3, "qwerty", "b64", 0);
 
-INSERT INTO submission(prompt_id, video)
+INSERT INTO submission(prompt_id, video, assigned)
 VALUES
-	(1, "sample_url"),
-    (5, "sample_url");
+	(1, "sample_url", 1),
+    (5, "sample_url", 1);
 
-INSERT INTO assigned_submissions(grader_id, assigner_id, submission_id, status, modified_date, assigned_date)
+INSERT INTO assigned_submissions(submission_id, img_grader_id, video_grader_id, prompt_grader_id, status)
 VALUES
-	(4, 5, 1, 0, "2024-11-16", "2024-11-16"),
-    (6, 7, 2, 0, "2024-11-16", "2024-11-16");
+	(1, 3, 5, 6, 0),
+    (2, 3, 5, 6, 0);
