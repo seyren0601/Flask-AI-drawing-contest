@@ -160,7 +160,7 @@ class user_update(Resource):
         parser.add_argument('team_info',type=str,required=False,location='json')
         argument = parser.parse_args()
         #########################
-        user_id  = argument['user_id']        
+        user_id  = argument['user_id']
         name = argument['name']
         username = argument['username']
         email = argument['email']
@@ -177,16 +177,25 @@ class assigned_submission_update(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('submission_id',type=int,required=True,location='json')
-        parser.add_argument('status', type=int,required=True,location='json')
-        parser.add_argument('comment', type=str,required=True,location='json', default="")
-        parser.add_argument('score',type=float,required=True,location='json')
+        parser.add_argument('img_score',type=float,required=False,location='json')
+        parser.add_argument('video_score',type=float,required=False,location='json')
+        parser.add_argument('prompt_score',type=float,required=False,location='json')
+        parser.add_argument('img_comment', type=str,required=False,location='json', default="")
+        parser.add_argument('video_comment', type=str,required=False,location='json', default="")
+        parser.add_argument('prompt_comment', type=str,required=False,location='json', default="")
+
+        
         argument = parser.parse_args()
         
         submission_id = argument['submission_id']
-        status = argument['status']
-        comment = argument['comment']
-        score = argument['score']
-        controller.update_assigned_submission(submission_id, status, comment, score)
+        img_score = argument['img_score']
+        video_score = argument['video_score']
+        prompt_score = argument['prompt_score']
+        img_comment = argument['img_comment']
+        video_comment = argument['video_comment']
+        prompt_comment = argument['prompt_comment']
+
+        controller.update_assigned_submission(submission_id, img_score, video_score, prompt_score, img_comment, video_comment, prompt_comment)
         
         return Response(status=200)
 
