@@ -28,8 +28,15 @@ def create_submission(prompt_id,video):
     return submission
 
 def create_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id):
-    assigned_submission = db.CREATE_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id)
+    assigned_submission = db.CREATE_assigned_submission(submission_id=submission_id, 
+                                                        img_grader_id=img_grader_id, 
+                                                        video_grader_id=video_grader_id, 
+                                                        prompt_grader_id=prompt_grader_id)
     return assigned_submission
+
+def create_assigned_submission():
+    assigned_submissions = db.CREATE_assigned_submission()
+    return assigned_submissions
 
 def execute_query(query):   
     match query.split():
@@ -41,7 +48,7 @@ def execute_query(query):
             result = db.execute_update(query)         
         # case ["DELETE", *rest]:
         #     result = "DELETE in query"
-    return result            
+    return result
             
 ### READ ###
 def get_all_user():

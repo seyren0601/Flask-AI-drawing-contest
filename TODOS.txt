@@ -1,16 +1,4 @@
-1. Refactor to new requirements:
-- Each submission is assigned to 3 grader:
-	+ image grader
-	+ video grader
-	+ descript grader
--> When there are 3 scores, an assigned submission is considered "graded" -> status = 1
-
-2. Fix get list user
-	query: group_id
-
-3. Implement endpoint /submission
-
-4. Fix user create endpoint
+1. Fix user create endpoint
 payload:
 	+ tên nhóm
 	+ trường nullable
@@ -19,11 +7,11 @@ payload:
 	+ email required
 	+ team_info required
 
-5. endpoint Phân công tự động TẤT CẢ các submission chưa được phân công
+2. endpoint Phân công tự động TẤT CẢ các submission chưa được phân công
 
-6. endpoint hủy 1 phân công và endpoint hủy tất cả phân công chưa có kết quả
+3. endpoint hủy 1 phân công và endpoint hủy tất cả phân công chưa có kết quả
 
-7. BE Authentication:
+4. BE Authentication:
 - When FE calls BE API, they must provide a session_token in request header
 - This session token is then matched with user list to find a user with correspond token
 -> Get this user group_id

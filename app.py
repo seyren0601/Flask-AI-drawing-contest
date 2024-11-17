@@ -41,7 +41,7 @@ class submission_create(Resource):
         submission = controller.create_submission(prompt_id,video)        
         return submission
     
-@api.route("/assigned_submission/create",methods=["POST"])
+@api.route("/assigned_submission/create",methods=["POST", "GET"])
 class submission_assigned(Resource):
     def post(self):
         parser = reqparse.RequestParser()
@@ -58,6 +58,11 @@ class submission_assigned(Resource):
 
         assigned_submission = controller.create_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id)
         return assigned_submission
+    
+    def get(self):
+        assigned_submissions = controller.create_assigned_submission()
+        return assigned_submissions
+    
 
 ### READ ###
 @api.route("/user", methods=['GET'])

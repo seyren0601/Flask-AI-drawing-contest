@@ -3,6 +3,7 @@ import os
 import datetime
 import json
 import logging
+import random
 from Helper import date_helper
 from dotenv import load_dotenv
 
@@ -54,22 +55,50 @@ def CREATE_submission(prompt_id,submit_date,video,score):
     date_helper.query_date_to_string(submission)
     return submission
 
-def CREATE_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id):
-    query = """
-        INSERT INTO assigned_submissions (submission_id, img_grader_id, video_grader_id, prompt_grader_id, status)
-        VALUE (%s,%s,%s,%s,%s)
-    """
-    db_cursor.execute(query,(submission_id, img_grader_id, video_grader_id, prompt_grader_id, 0))
+def CREATE_assigned_submission(**kwargs):
+    if len(kwargs.items()) > 0:
+        submission_id = kwargs['submission_id']
+        img_grader_id = kwargs['img_grader_id']
+        video_grader_id = kwargs['video_grader_id']
+        prompt_grader_id = kwargs['prompt_grader_id']
+        query = """
+            INSERT INTO assigned_submissions (submission_id, img_grader_id, video_grader_id, prompt_grader_id, status)
+            VALUE (%s,%s,%s,%s,%s)
+        """
+        db_cursor.execute(query,(submission_id, img_grader_id, video_grader_id, prompt_grader_id, 0))
 
-    query = f"UPDATE submission SET assigned = 1 WHERE submission_id = {submission_id}"
-    db_cursor.execute(query)
-    mysql_client.commit()
+        query = f"UPDATE submission SET assigned = 1 WHERE submission_id = {submission_id}"
+        db_cursor.execute(query)
+        mysql_client.commit()
 
-    db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}")
+        db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}")
 
-    assigned_submission = db_cursor.fetchall()
-    date_helper.query_date_to_string(assigned_submission)
-    return assigned_submission
+        assigned_submission = db_cursor.fetchall()
+        date_helper.query_date_to_string(assigned_submission)
+        return assigned_submission
+    else:
+        query = f"SELECT * FROM user WHERE group_id = 1"
+        db_cursor.execute(query)
+        res = db_cursor.fetchall()
+        grader_list = []
+        for row in res:
+            grader_list.append(row['user_id'])
+
+        query = f"SELECT * FROM submission WHERE assigned = 0"
+        db_cursor.execute(query)
+        submission_list = db_cursor.fetchall()
+
+        assigned_submissions = []
+
+        for submission in submission_list:
+            print(str(submission))
+            img_grader_id = grader_list[random.randint(1, len(grader_list)) - 1]
+            video_grader_id = grader_list[random.randint(1, len(grader_list)) - 1]
+            prompt_grader_id = grader_list[random.randint(1, len(grader_list)) - 1]
+            res = CREATE_assigned_submission(submission_id=submission['submission_id'], img_grader_id=img_grader_id, video_grader_id=video_grader_id, prompt_grader_id=prompt_grader_id)
+            assigned_submissions.append(res[0])
+
+        return assigned_submissions
 
 ### READ ###
 def GET_all_users():
