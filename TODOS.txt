@@ -1,14 +1,3 @@
-1. Fix user create endpoint
-payload:
-	+ tên nhóm
-	+ trường nullable
-	+ lớp nullable
-	+ sđt required
-	+ email required
-	+ team_info required
-
-2. endpoint Phân công tự động TẤT CẢ các submission chưa được phân công
-
 3. endpoint hủy 1 phân công và endpoint hủy tất cả phân công chưa có kết quả
 
 4. BE Authentication:

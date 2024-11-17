@@ -6,6 +6,8 @@ CREATE TABLE user(
 	user_id int auto_increment,
     name nvarchar(256),
     username nvarchar(128) unique,
+    school_name nvarchar(256),
+    grade nvarchar(256),
     email nvarchar(256),
     phone_number nvarchar(256),
     group_id tinyint,
