@@ -76,5 +76,5 @@ VALUES
 
 INSERT INTO assigned_submissions(grader_id, assigner_id, submission_id, status, modified_date, assigned_date)
 VALUES
-	(4, 5, 1, 0, "2024-11-16", "2024-11-16"),
-    (6, 7, 2, 0, "2024-11-16", "2024-11-16");
+	(2, 3, 1, 0, "2024-11-16", "2024-11-16"),
+    (4, 5, 2, 0, "2024-11-16", "2024-11-16");

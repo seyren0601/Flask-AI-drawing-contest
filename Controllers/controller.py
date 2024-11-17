@@ -27,12 +27,8 @@ def create_submission(prompt_id,video):
     prompt = db.UPDATE_prompt(prompt_id)
     return submission
 
-def create_assigned_submission(grader_id,submission_id,assigner_id):
-    status = 0
-    modified_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    assigned_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    comment = None
-    assigned_submission = db.CREATE_assigned_submission(grader_id,submission_id,status,modified_date,comment,assigned_date,assigner_id)
+def create_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id):
+    assigned_submission = db.CREATE_assigned_submission(submission_id, img_grader_id, video_grader_id, prompt_grader_id)
     return assigned_submission
 ### READ ###
 def get_all_user():

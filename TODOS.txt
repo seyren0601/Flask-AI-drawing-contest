@@ -5,6 +5,30 @@
 	+ descript grader
 -> When there are 3 scores, an assigned submission is considered "graded" -> status = 1
 
+2. Fix login api /user/login:
+- return:
+	user_id
+	group_id
+
+3. Fix group_id convention:
+	0: admin
+	1: grader
+	2: user
+
+4. Fix get list user
+	query: group_id
+
+5. Implement endpoint /submission/
+
+6. Fix user create endpoint
+payload:
+	+ tên nhóm
+	+ trường nullable
+	+ lớp nullable
+	+ sđt required
+	+ email required
+	+ team_info required
+
 2. BE Authentication:
 - When FE calls BE API, they must provide a session_token in request header
 - This session token is then matched with user list to find a user with correspond token
