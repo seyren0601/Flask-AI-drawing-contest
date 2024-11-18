@@ -47,7 +47,10 @@ class prompt_create(Resource):
         argument = parser.parse_args()
         team_id = argument['team_id']
         prompt = argument['prompt']
-        image = controller.create_prompt(team_id,prompt)
+        try:
+            image = controller.create_prompt(team_id,prompt)
+        except PermissionError:
+            return Response(status=400, response="Prompt limit exceeded.")
         return image
     
 @api.route("/submission/create",methods=['POST'])

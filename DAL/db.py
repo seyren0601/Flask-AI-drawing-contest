@@ -83,14 +83,15 @@ def CREATE_user_v2(insert_data):
         user = date_helper.query_date_to_string(user)
         return user[0]
 
-def CREATE_prompt(team_id,date_time,prompt,image,submitted):
+def CREATE_prompt(team_id,date_time,prompt,image):
     with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client) 
-        query = """ 
+        db_cursor = init_cursor(mysql_client)
+                
+        query = """
             INSERT INTO prompts (team_id,date_time,prompt,image,submitted)
-            VALUE (%s,%s,%s,%s,%s)
+            VALUE (%s,%s,%s,%s, 0)
         """
-        db_cursor.execute(query,(team_id,date_time,prompt,image,submitted))
+        db_cursor.execute(query,(team_id,date_time,prompt,image))
         mysql_client.commit()
 
 def CREATE_submission(prompt_id,submit_date,video,assigned):

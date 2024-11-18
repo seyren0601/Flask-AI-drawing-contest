@@ -35,10 +35,14 @@ def create_user_v2(name,school_name,grade,phone_number,email,team_info):
     return {'user_id':new_user['user_id'],'username':new_user['username'], 'password':password}
 
 def create_prompt(team_id,prompt):
+    team_prompts = get_team_prompts(team_id)
+    
+    if len(team_prompts) == 5:
+        raise PermissionError
+    
     image = model.image_generate(prompt)
     date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    submitted = 0    
-    db.CREATE_prompt(team_id,date_time,prompt,image,submitted)
+    db.CREATE_prompt(team_id,date_time,prompt,image)
     return image
 
 def create_submission(prompt_id,video):
