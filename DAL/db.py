@@ -17,9 +17,7 @@ def init_connection():
         user=db_user,
         password=db_password,
         database="ai_drawing_contest"
-    )
-
-    
+    )    
     return mysql_client
 
 def init_cursor(client):
@@ -296,6 +294,7 @@ def UPDATE_user(user_id, update_data):
                     SET {', '.join(updates)}
                     WHERE user_id = %s"""
         db_cursor.execute(query,tuple(params))
+        row = db_cursor.rowcount        
         mysql_client.commit()    
 
 def UPDATE_prompt(prompt_id):
