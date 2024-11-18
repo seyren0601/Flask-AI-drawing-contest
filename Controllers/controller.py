@@ -45,18 +45,17 @@ def create_prompt(team_id,prompt):
     db.CREATE_prompt(team_id,date_time,prompt,image)
     return image
 
-def create_submission(prompt_id,video):
+def create_submission(prompt_id):
     date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  
     assigned = 0  
-    submission = db.CREATE_submission(prompt_id,date_time,video,assigned)    
+    submission = db.CREATE_submission(prompt_id,date_time,assigned)    
     prompt = db.UPDATE_prompt(prompt_id)
     return submission
 
 def create_assigned_submission(**kwargs):
     if len(kwargs.items()) > 0:
         assigned_submission = db.CREATE_assigned_submission(submission_id=kwargs['submission_id'], 
-                                                            img_grader_id=kwargs['img_grader_id'], 
-                                                            video_grader_id=kwargs['video_grader_id'], 
+                                                            img_grader_id=kwargs['img_grader_id'],                                                             
                                                             prompt_grader_id=kwargs['prompt_grader_id'])
         return assigned_submission
     else:
@@ -163,14 +162,12 @@ def update_user(user_id,name,username,email,school_name,grade,phonenumber,new_pa
     return update_user
 
 
-def update_assigned_submission(submission_id, img_score, video_score, prompt_score, img_comment, video_comment, prompt_comment):
+def update_assigned_submission(submission_id, img_score, prompt_score, img_comment,prompt_comment):
     update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     params = {
-        "img_score":img_score, 
-        "video_score":video_score, 
+        "img_score":img_score,         
         "prompt_score":prompt_score, 
-        "img_comment":img_comment,
-        "video_comment":video_comment,
+        "img_comment":img_comment,        
         "prompt_comment":prompt_comment
     }
     db.UPDATE_assigned_submission(submission_id, params, update_time)
