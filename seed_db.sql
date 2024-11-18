@@ -33,8 +33,7 @@ CREATE TABLE prompts(
 CREATE TABLE submission(
 	submission_id int auto_increment,
     prompt_id int,
-    submit_date datetime,
-    video varchar(256),
+    submit_date datetime,   
     assigned boolean,
     PRIMARY KEY(submission_id),
     FOREIGN KEY(prompt_id) REFERENCES prompts(prompt_id)
@@ -42,21 +41,17 @@ CREATE TABLE submission(
 
 CREATE TABLE assigned_submissions(
     submission_id int,
-    img_grader_id int,
-    video_grader_id int,
+    img_grader_id int,    
     prompt_grader_id int,
-    img_comment text,
-    video_comment text,
+    img_comment text,    
     prompt_comment text,
-    img_score float,
-    video_score float,
+    img_score float,    
     prompt_score float,
     status boolean,
     modified_date datetime,
-    PRIMARY KEY(submission_id, img_grader_id, video_grader_id, prompt_grader_id),
+    PRIMARY KEY(submission_id, img_grader_id, prompt_grader_id),
     FOREIGN KEY(submission_id) REFERENCES submission(submission_id),
-	FOREIGN KEY(img_grader_id) REFERENCES user(user_id),
-    FOREIGN KEY(video_grader_id) REFERENCES user(user_id),
+	FOREIGN KEY(img_grader_id) REFERENCES user(user_id),    
     FOREIGN KEY(prompt_grader_id) REFERENCES user(user_id)
 );
 
@@ -81,17 +76,17 @@ VALUES
     (3, "xyz", "b64", 1),
     (3, "qwerty", "b64", 0);
 
-INSERT INTO submission(prompt_id, video, assigned)
+INSERT INTO submission(prompt_id, assigned)
 VALUES
-	(1, "sample_url", 0),
-    (5, "sample_url", 0);
+	(1,  0),
+    (5,  0);
 
--- INSERT INTO submission(prompt_id, video, assigned)
+-- INSERT INTO submission(prompt_id, assigned)
 -- VALUES
--- 	(1, "sample_url", 1),
---     (5, "sample_url", 1);
+-- 	(1, 1),
+--     (5,1);
 
-INSERT INTO assigned_submissions(submission_id, img_grader_id, video_grader_id, prompt_grader_id, status)
+INSERT INTO assigned_submissions(submission_id, img_grader_id, prompt_grader_id, status)
 VALUES
-	(1, 3, 5, 6, 0),
-    (2, 3, 3, 6, 0);
+	(1, 3,  6, 0),
+    (2, 3,6, 0);
