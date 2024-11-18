@@ -306,22 +306,16 @@ def UPDATE_assigned_submission(submission_id, params:dict, update_time):
         db_cursor = init_cursor(mysql_client)
         sql = f"""SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}"""
         db_cursor.execute(sql)
-        res = db_cursor.fetchall()
-        obj_before_grade = date_helper.query_date_to_string(res)[0]
-        if obj_before_grade['status']:
-            raise PermissionError()
+        res = db_cursor.fetchall()        
 
         sql = """UPDATE assigned_submissions
                                 SET """
         for key,value in params.items():
             if value:
-                if not obj_before_grade[key]:
-                    if type(value) == str:
+                if type(value) == str:
                         sql += f" {key} = \"{value}\","
-                    else:
-                        sql += f" {key} = {value},"
                 else:
-                    raise ValueError()
+                    sql += f" {key} = {value},"
 
         sql += f"modified_date = \"{update_time}\" "
         sql += f"WHERE submission_id = {submission_id}"
