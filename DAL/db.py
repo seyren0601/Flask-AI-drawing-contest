@@ -92,20 +92,36 @@ def CREATE_prompt(team_id,date_time,prompt,image):
         db_cursor.execute(query,(team_id,date_time,prompt,image))
         mysql_client.commit()
 
-def CREATE_submission(prompt_id,submit_date,video,assigned):
+def CREATE_submission(prompt_id,submit_date,video):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
+        
+        query = f"""WITH q AS(
+                        SELECT team_id
+                        FROM prompts
+                        WHERE prompts.prompt_id = {prompt_id}
+                    )
+                    SELECT *
+                    FROM prompts
+                    WHERE team_id = (SELECT * FROM q) AND submitted=1
+                    """
+        db_cursor.execute(query)
+        res = db_cursor.fetchall()
+        if len(res) > 0:
+            team_id = res[0]['team_id']
+            raise PermissionError("Submission limit exceeded")
+        
         query = """
             INSERT INTO submission (prompt_id,submit_date,video,assigned)
-            VALUE (%s,%s,%s,%s)
+            VALUE (%s,%s,%s, 0)
         """
-        db_cursor.execute(query,(prompt_id,submit_date,video,assigned))
+        db_cursor.execute(query,(prompt_id,submit_date,video))
         mysql_client.commit()
 
         db_cursor.execute(f"SELECT * FROM submission WHERE submission_id = {db_cursor.lastrowid}")
         submission = db_cursor.fetchall()
         date_helper.query_date_to_string(submission)
-        return submission
+        return submission[0]
 
 def CREATE_assigned_submission(**kwargs):
     with init_connection() as mysql_client:
@@ -340,6 +356,9 @@ def UPDATE_assigned_submission(submission_id, params:dict, update_time):
                     WHERE submission_id = {submission_id}"""
             db_cursor.execute(sql)
         mysql_client.commit()
+        
+### DELETE ###
+
 
 ### Custom query ###
 def execute_select(query):

@@ -62,7 +62,11 @@ class submission_create(Resource):
         argument = parser.parse_args()        
         prompt_id = argument['prompt_id']
         video = argument['video']
-        submission = controller.create_submission(prompt_id,video)        
+        
+        try:
+            submission = controller.create_submission(prompt_id,video)
+        except PermissionError as e:
+            return Response(status=400, response=str(e))
         return submission
     
 @api.route("/assigned_submission/create",methods=["POST", "GET"])
