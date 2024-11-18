@@ -250,5 +250,16 @@ class assigned_submission_update(Resource):
 
 
 ### DELETE ###
+@api.route("/assigned_submission/delete", methods=['DELETE'])
+class assigned_submission_update(Resource):
+    def delete(self):
+        submission_id = request.args.get('submission_id')
+        if submission_id:
+            controller.delete_assigned_submission(submission_id)
+        else:
+            controller.delete_all_ungraded_assigned_submissions()
+            
+        return Response(status=200)
+
 if __name__ == '__main__':
     app.run(debug=True)

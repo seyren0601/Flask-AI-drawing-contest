@@ -176,3 +176,8 @@ def update_assigned_submission(submission_id, img_score, video_score, prompt_sco
 
 
 ### DELETE ###
+def delete_assigned_submission(submission_id):
+    db.DELETE_assigned_submission(submission_id)
+    
+def delete_all_ungraded_assigned_submissions():
+    db.DELETE_all_ungraded_assigned_submissions()

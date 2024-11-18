@@ -358,7 +358,29 @@ def UPDATE_assigned_submission(submission_id, params:dict, update_time):
         mysql_client.commit()
         
 ### DELETE ###
+def DELETE_all_ungraded_assigned_submissions():
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        
+        sql = f"UPDATE submission SET assigned = 0 WHERE submission_id IN (SELECT submission_id FROM assigned_submissions WHERE status = 0)"
+        db_cursor.execute(sql)
+        
+        sql = f"DELETE FROM assigned_submissions WHERE status = 0"
+        db_cursor.execute(sql)
+        
+        mysql_client.commit()
 
+def DELETE_assigned_submission(submission_id):
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        
+        sql = f"DELETE FROM assigned_submissions WHERE submission_id = {submission_id}"
+        db_cursor.execute(sql)
+        
+        sql = f"UPDATE submission SET assigned = 0 WHERE submission_id = {submission_id}"
+        db_cursor.execute(sql)
+        
+        mysql_client.commit()
 
 ### Custom query ###
 def execute_select(query):
