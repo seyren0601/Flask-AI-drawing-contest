@@ -57,14 +57,12 @@ class prompt_create(Resource):
 class submission_create(Resource):
     def post(self):
         parser = reqparse.RequestParser()        
-        parser.add_argument('prompt_id',type=int,required=True,location='json')
-        parser.add_argument('video',type=str,required=True,location='json')
+        parser.add_argument('prompt_id',type=int,required=True,location='json')        
         argument = parser.parse_args()        
-        prompt_id = argument['prompt_id']
-        video = argument['video']
+        prompt_id = argument['prompt_id']        
         
         try:
-            submission = controller.create_submission(prompt_id,video)
+            submission = controller.create_submission(prompt_id)
         except PermissionError as e:
             return Response(status=400, response=str(e))
         return submission
@@ -74,19 +72,16 @@ class submission_assigned(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("submission_id",type=int,required=True,location='json')
-        parser.add_argument("img_grader_id",type=int,required=True,location='json')
-        parser.add_argument("video_grader_id",type=int,required=True,location='json')
+        parser.add_argument("img_grader_id",type=int,required=True,location='json')        
         parser.add_argument("prompt_grader_id",type=int,required=True,location='json')
 
         argument = parser.parse_args()
         submission_id = argument["submission_id"]
-        img_grader_id = argument["img_grader_id"]
-        video_grader_id = argument["video_grader_id"]
+        img_grader_id = argument["img_grader_id"]        
         prompt_grader_id = argument["prompt_grader_id"]
 
         assigned_submission = controller.create_assigned_submission(submission_id=submission_id, 
-                                                                    img_grader_id=img_grader_id, 
-                                                                    video_grader_id=video_grader_id, 
+                                                                    img_grader_id=img_grader_id,                                                                     
                                                                     prompt_grader_id=prompt_grader_id)
         return assigned_submission
     
@@ -222,24 +217,20 @@ class assigned_submission_update(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('submission_id',type=int,required=True,location='json')
-        parser.add_argument('img_score',type=float,required=False,location='json')
-        parser.add_argument('video_score',type=float,required=False,location='json')
+        parser.add_argument('img_score',type=float,required=False,location='json')        
         parser.add_argument('prompt_score',type=float,required=False,location='json')
-        parser.add_argument('img_comment', type=str,required=False,location='json', default="")
-        parser.add_argument('video_comment', type=str,required=False,location='json', default="")
+        parser.add_argument('img_comment', type=str,required=False,location='json', default="")        
         parser.add_argument('prompt_comment', type=str,required=False,location='json', default="")
         
         argument = parser.parse_args()
         
         submission_id = argument['submission_id']
-        img_score = argument['img_score']
-        video_score = argument['video_score']
+        img_score = argument['img_score']        
         prompt_score = argument['prompt_score']
-        img_comment = argument['img_comment']
-        video_comment = argument['video_comment']
+        img_comment = argument['img_comment']        
         prompt_comment = argument['prompt_comment']
         try:
-            controller.update_assigned_submission(submission_id, img_score, video_score, prompt_score, img_comment, video_comment, prompt_comment)
+            controller.update_assigned_submission(submission_id, img_score,prompt_score, img_comment, prompt_comment)
         except ValueError:
             return Response(status=400, response="Grade already exists")
         except PermissionError:

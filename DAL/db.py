@@ -92,7 +92,7 @@ def CREATE_prompt(team_id,date_time,prompt,image):
         db_cursor.execute(query,(team_id,date_time,prompt,image))
         mysql_client.commit()
 
-def CREATE_submission(prompt_id,submit_date,video):
+def CREATE_submission(prompt_id,submit_date):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         
@@ -112,10 +112,10 @@ def CREATE_submission(prompt_id,submit_date,video):
             raise PermissionError("Submission limit exceeded")
         
         query = """
-            INSERT INTO submission (prompt_id,submit_date,video,assigned)
-            VALUE (%s,%s,%s, 0)
+            INSERT INTO submission (prompt_id,submit_date,assigned)
+            VALUE (%s,%s, 0)
         """
-        db_cursor.execute(query,(prompt_id,submit_date,video))
+        db_cursor.execute(query,(prompt_id,submit_date))
         mysql_client.commit()
 
         db_cursor.execute(f"SELECT * FROM submission WHERE submission_id = {db_cursor.lastrowid}")
@@ -128,14 +128,13 @@ def CREATE_assigned_submission(**kwargs):
         db_cursor = init_cursor(mysql_client)
         if len(kwargs.items()) > 0:
             submission_id = kwargs['submission_id']
-            img_grader_id = kwargs['img_grader_id']
-            video_grader_id = kwargs['video_grader_id']
+            img_grader_id = kwargs['img_grader_id']            
             prompt_grader_id = kwargs['prompt_grader_id']
             query = """
-                INSERT INTO assigned_submissions (submission_id, img_grader_id, video_grader_id, prompt_grader_id, status)
-                VALUE (%s,%s,%s,%s,%s)
+                INSERT INTO assigned_submissions (submission_id, img_grader_id,prompt_grader_id, status)
+                VALUE (%s,%s,%s,%s)
             """
-            db_cursor.execute(query,(submission_id, img_grader_id, video_grader_id, prompt_grader_id, 0))
+            db_cursor.execute(query,(submission_id, img_grader_id, prompt_grader_id, 0))
 
             query = f"UPDATE submission SET assigned = 1 WHERE submission_id = {submission_id}"
             db_cursor.execute(query)
@@ -162,10 +161,9 @@ def CREATE_assigned_submission(**kwargs):
 
             for submission in submission_list:
                 print(str(submission))
-                img_grader_id = grader_list[random.randint(1, len(grader_list)) - 1]
-                video_grader_id = grader_list[random.randint(1, len(grader_list)) - 1]
+                img_grader_id = grader_list[random.randint(1, len(grader_list)) - 1]                
                 prompt_grader_id = grader_list[random.randint(1, len(grader_list)) - 1]
-                res = CREATE_assigned_submission(submission_id=submission['submission_id'], img_grader_id=img_grader_id, video_grader_id=video_grader_id, prompt_grader_id=prompt_grader_id)
+                res = CREATE_assigned_submission(submission_id=submission['submission_id'], img_grader_id=img_grader_id, prompt_grader_id=prompt_grader_id)
                 assigned_submissions.append(res[0])
 
             return assigned_submissions
@@ -254,7 +252,7 @@ def GET_submission(submission_id):
 def GET_team_submission(team_id):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"""SELECT submission_id, submission.prompt_id, submit_date, video
+        db_cursor.execute(f"""SELECT submission_id, submission.prompt_id, submit_date
                                 FROM submission INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
                                 WHERE prompts.team_id = {team_id}""")
         res = db_cursor.fetchall()
@@ -267,7 +265,7 @@ def GET_grader_assigned_submissions(grader_id):
         db_cursor = init_cursor(mysql_client)
         db_cursor.execute(f"""SELECT * 
                             FROM assigned_submissions 
-                            WHERE img_grader_id = {grader_id} OR video_grader_id = {grader_id} OR prompt_grader_id = {grader_id}""")
+                            WHERE img_grader_id = {grader_id}  OR prompt_grader_id = {grader_id}""")
         
         res = db_cursor.fetchall()
         
@@ -324,22 +322,16 @@ def UPDATE_assigned_submission(submission_id, params:dict, update_time):
         db_cursor = init_cursor(mysql_client)
         sql = f"""SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}"""
         db_cursor.execute(sql)
-        res = db_cursor.fetchall()
-        obj_before_grade = date_helper.query_date_to_string(res)[0]
-        if obj_before_grade['status']:
-            raise PermissionError()
+        res = db_cursor.fetchall()        
 
         sql = """UPDATE assigned_submissions
                                 SET """
         for key,value in params.items():
             if value:
-                if not obj_before_grade[key]:
-                    if type(value) == str:
+                if type(value) == str:
                         sql += f" {key} = \"{value}\","
-                    else:
-                        sql += f" {key} = {value},"
                 else:
-                    raise ValueError()
+                    sql += f" {key} = {value},"
 
         sql += f"modified_date = \"{update_time}\" "
         sql += f"WHERE submission_id = {submission_id}"
@@ -350,7 +342,7 @@ def UPDATE_assigned_submission(submission_id, params:dict, update_time):
         db_cursor.execute(sql)
         res = db_cursor.fetchall()
         obj_after_grade = date_helper.query_date_to_string(res)[0]
-        if obj_after_grade['img_score'] and obj_after_grade['video_score'] and ['prompt_score']:
+        if obj_after_grade['img_score']  and ['prompt_score']:
             sql = f"""UPDATE assigned_submissions
                     SET status = 1
                     WHERE submission_id = {submission_id}"""
