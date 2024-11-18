@@ -293,9 +293,8 @@ def UPDATE_user(user_id, update_data):
         query = f"""UPDATE user 
                     SET {', '.join(updates)}
                     WHERE user_id = %s"""
-        db_cursor.execute(query,tuple(params))
-        row = db_cursor.rowcount        
-        mysql_client.commit()    
+        db_cursor.execute(query,tuple(params))               
+        mysql_client.commit()       
 
 def UPDATE_prompt(prompt_id):
     with init_connection() as mysql_client:

@@ -155,6 +155,9 @@ def update_user(user_id,name,username,email,school_name,grade,phonenumber,new_pa
         "team_info":team_info
     }
     db.UPDATE_user(user_id,update_data)
+    update_user = db.GET_user(user_id)
+    return update_user
+
 
 def update_assigned_submission(submission_id, img_score, video_score, prompt_score, img_comment, video_comment, prompt_comment):
     update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')

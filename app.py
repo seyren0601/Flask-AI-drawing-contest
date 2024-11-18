@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response,jsonify
 from flask import request
 from flask_cors import CORS
 from flask_restx import reqparse
@@ -206,9 +206,9 @@ class user_update(Resource):
         new_password = argument['password']
         team_info = argument['team_info']
         ########################
-        controller.update_user(user_id,name,username,email,school_name,grade,phonenumber,new_password,team_info)
+        update_user = controller.update_user(user_id,name,username,email,school_name,grade,phonenumber,new_password,team_info)
 
-        return Response(status=200)
+        return jsonify(update_user)
 
 @api.route("/assigned_submission/update", methods=["POST"])
 class assigned_submission_update(Resource):
