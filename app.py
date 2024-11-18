@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response,jsonify
 from flask import request
 from flask_cors import CORS
 from flask_restx import reqparse
@@ -190,8 +190,10 @@ class user_update(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('user_id',type=int,required=True,location='json')
         parser.add_argument('name',type=str,required=False,location='json')
-        parser.add_argument('username',type=str,required=True,location='json')
+        parser.add_argument('username',type=str,required=False,location='json')
         parser.add_argument('email',type=str,required=False,location='json')
+        parser.add_argument('school_name',type=str,required=False,location='json')
+        parser.add_argument('grade',type=str,required=False,location='json')
         parser.add_argument('phonenumber',type=str,required=False,location='json')
         parser.add_argument('password',type=str,required=False,location='json')
         parser.add_argument('team_info',type=str,required=False,location='json')
@@ -201,13 +203,15 @@ class user_update(Resource):
         name = argument['name']
         username = argument['username']
         email = argument['email']
+        school_name = argument['school_name']
+        grade = argument['grade']
         phonenumber = argument['phonenumber']
         new_password = argument['password']
         team_info = argument['team_info']
         ########################
-        controller.update_user(user_id,name,username,email,phonenumber,new_password,team_info)
+        update_user = controller.update_user(user_id,name,username,email,school_name,grade,phonenumber,new_password,team_info)
 
-        return Response(status=200)
+        return jsonify(update_user)
 
 @api.route("/assigned_submission/update", methods=["POST"])
 class assigned_submission_update(Resource):

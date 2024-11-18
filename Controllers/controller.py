@@ -141,24 +141,27 @@ def get_all_assigned_submissions():
     return assigned_submissions
 
 ### UPDATE ###
-def update_user(user_id,name,username,email,phonenumber,new_password,team_info):
-    print(new_password)
+def update_user(user_id,name,username,email,school_name,grade,phonenumber,new_password,team_info):   
     current_user = get_user(user_id)[0]
     salt = current_user['salt'].encode("utf-8")
     if new_password:      
-        hashed_pw = user.hash_password(new_password,salt)[1]  
-        print(f"Update hashed_pw: {hashed_pw}")                            
+        hashed_pw = user.hash_password(new_password,salt)[1]                                    
     else:        
         hashed_pw = current_user['hashed_pw']
     update_data = {
         "name": name,
         "username": username,
         "email":email,
+        "school_name": school_name,
+        "grade": grade,
         "phone_number":phonenumber,        
         "hashed_pw":hashed_pw,
         "team_info":team_info
     }
     db.UPDATE_user(user_id,update_data)
+    update_user = db.GET_user(user_id)
+    return update_user
+
 
 def update_assigned_submission(submission_id, img_score, video_score, prompt_score, img_comment, video_comment, prompt_comment):
     update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
