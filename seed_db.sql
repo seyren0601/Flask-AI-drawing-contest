@@ -58,23 +58,23 @@ CREATE TABLE assigned_submissions(
 INSERT INTO user(username, name, email, group_id)
 VALUES
 	("usr00000", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
-    ("usr00001", "abcxyz", "aaa@gmail.com", 2),
-    ("usr00002", "asdfas", "asw@gmail.com", 1),
-	("usr00003", "wqtah", "aaa@gmail.com", 2),
-    ("usr00004", "qwetasd", "aaa@gmail.com", 1),
-    ("usr00005", "skwoiyjkj", "aaa@gmail.com", 1);
+    ("usr00001", "team_1", "aaa@gmail.com", 2),
+    ("usr00002", "grader_1", "asw@gmail.com", 1),
+	("usr00003", "team_2", "aaa@gmail.com", 2),
+    ("usr00004", "grader_2", "aaa@gmail.com", 1),
+    ("usr00005", "grader_3", "aaa@gmail.com", 1);
     
-INSERT INTO user(username, group_id, salt, hashed_pw)
-VALUES("usr00006", 2, "$2b$12$BZyS/bsY816Aw5tZADVMLe", "$2b$12$BZyS/bsY816Aw5tZADVMLeSGEklXB2346NneyjXEPN/CcRXjcslou");
+INSERT INTO user(username, name, group_id, salt, hashed_pw)
+VALUES("usr00006", "team_3", 2, "$2b$12$BZyS/bsY816Aw5tZADVMLe", "$2b$12$BZyS/bsY816Aw5tZADVMLeSGEklXB2346NneyjXEPN/CcRXjcslou");
     
 INSERT INTO prompts(team_id, prompt, image, submitted)
 VALUES
 	(2, "abc", "b64", 1),
     (2, "xyz", "b64", 0),
     (2, "qwerty", "b64", 0),
-    (3, "abc", "b64", 0),
-    (3, "xyz", "b64", 1),
-    (3, "qwerty", "b64", 0);
+    (4, "abc", "b64", 0),
+    (4, "xyz", "b64", 1),
+    (4, "qwerty", "b64", 0);
 
 INSERT INTO submission(prompt_id, assigned)
 VALUES
@@ -89,4 +89,4 @@ VALUES
 INSERT INTO assigned_submissions(submission_id, img_grader_id, prompt_grader_id, status)
 VALUES
 	(1, 3,  6, 0),
-    (2, 3,6, 0);
+    (2, 3,5, 0);
