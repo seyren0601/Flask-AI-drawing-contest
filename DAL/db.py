@@ -262,6 +262,8 @@ def GET_submission_history(team_id):
 
             if len(res) == 0:
                 raise ValueError()
+            
+            res = date_helper.query_date_to_string(res)
 
             return res[0]
 
