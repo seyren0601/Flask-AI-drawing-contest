@@ -99,8 +99,11 @@ class user_read(Resource):
         user_id = request.args.get('user_id')
         group_id = request.args.get('group_id')
         if user_id:
-            user = controller.get_user(user_id)
-            return user
+            try:
+                user = controller.get_user(user_id)
+                return user
+            except ValueError :
+                return Response(status=400,response="User not found")            
         elif group_id : 
             user = controller.get_user_by_group(group_id)
             return user
@@ -149,11 +152,17 @@ class submission_read(Resource):
         submission_id = request.args.get('submission_id')
         team_id = request.args.get('team_id')
         if submission_id:
-            submission = controller.get_submission(submission_id)
-            return submission
+            try:
+                submission = controller.get_submission(submission_id)
+                return submission
+            except ValueError:
+                return Response(status=400,response="Submission not found")
         if team_id:
-            submission = controller.get_team_submission(team_id)
-            return submission
+            try:            
+                submission = controller.get_team_submission(team_id)
+                return submission
+            except ValueError as e:
+                return Response(status=400,response="Team not found")
         submissions = controller.get_all_submissions()
         return submissions
     

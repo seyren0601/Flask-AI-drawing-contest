@@ -140,7 +140,7 @@ def get_all_assigned_submissions():
 
 ### UPDATE ###
 def update_user(user_id,name,username,email,school_name,grade,phonenumber,new_password,team_info):   
-    current_user = get_user(user_id)[0]
+    current_user = get_user(user_id)
     salt = current_user['salt'].encode("utf-8")
     if new_password:      
         hashed_pw = user.hash_password(new_password,salt)[1]                                    
