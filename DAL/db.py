@@ -234,7 +234,14 @@ def GET_all_prompts():
 def GET_all_submissions():
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"SELECT * FROM submission")
+
+        sql = f"""SELECT name as team_name, submission_id, submission.prompt_id, submit_date, assigned
+                    FROM submission 
+                        INNER JOIN prompts ON submission.prompt_id = prompts.prompt_id
+                        INNER JOIN user ON user.user_id = prompts.team_id
+                """
+
+        db_cursor.execute(sql)
         res = db_cursor.fetchall()
         
         res = date_helper.query_date_to_string(res)
