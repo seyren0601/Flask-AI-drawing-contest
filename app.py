@@ -156,7 +156,21 @@ class submission_read(Resource):
             return submission
         submissions = controller.get_all_submissions()
         return submissions
-    
+
+@api.route("/submission/history", methods=['GET'])
+@api.param('team_id')
+class submission_history(Resource):
+    def get(self):
+        team_id = request.args.get('team_id')
+        if team_id:
+            try:
+                submission_history = controller.get_submission_history(team_id)
+                return submission_history
+            except ValueError:
+                return Response(status=400, response="Unable to fetch submission history")
+        else:
+            return Response(status=400, response='team_id argument not found')
+
 @api.route("/assigned_submissions", methods=['GET'])
 @api.param('grader_id')
 @api.param('submission_id')

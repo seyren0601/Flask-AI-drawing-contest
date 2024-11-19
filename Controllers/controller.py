@@ -126,6 +126,10 @@ def get_submission(submission_id):
     submission = db.GET_submission(submission_id)
     return submission
 
+def get_submission_history(team_id):
+    submission_history = db.GET_submission_history(team_id)
+    return submission_history
+
 def get_grader_assigned_submissions(grader_id):
     assigned_submissions = db.GET_grader_assigned_submissions(grader_id)
     return assigned_submissions

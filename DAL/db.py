@@ -248,6 +248,22 @@ def GET_submission(submission_id):
         
         res = date_helper.query_date_to_string(res)
         return res
+    
+def GET_submission_history(team_id):
+    with init_connection() as mysql_client:
+        with init_cursor(mysql_client) as db_cursor:
+            sql = f"""SELECT name, team_info, submit_date, prompt, image 
+                    FROM user INNER JOIN prompts ON user.user_id = prompts.team_id
+                            INNER JOIN submission ON prompts.prompt_id = submission.prompt_id
+                    WHERE team_id = {team_id} AND submitted = 1
+            """
+            db_cursor.execute(sql)
+            res = db_cursor.fetchall()
+
+            if len(res) == 0:
+                raise ValueError()
+
+            return res[0]
 
 def GET_team_submission(team_id):
     with init_connection() as mysql_client:
