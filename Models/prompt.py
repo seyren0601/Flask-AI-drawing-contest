@@ -19,14 +19,15 @@ class Prompt(db.Model):
     # assigned: Mapped[bool]
     
     # Relationships
-    team_id: Mapped[int] = mapped_column(ForeignKey('user.user_id'))
+    team_id: Mapped[int] = mapped_column(ForeignKey('User.user_id'))
     
     def toJson(self):
         return {
             "prompt_id":self.prompt_id,
             "prompt":self.prompt,
             "image":self.image,
-            "date_time":str(self.date_time)
+            "date_time":str(self.date_time),
+            "team_id":self.team_id
             # "submitted":self.submitted,
             # "submit_date":self.submit_date,
             # "assigned":self.assigned

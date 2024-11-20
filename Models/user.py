@@ -2,6 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 from typing import List
+from .prompt import Prompt
 
 db = SQLAlchemy()
 
@@ -24,8 +25,7 @@ class User(db.Model):
     session_token: Mapped[str]
     
     # Relationships
-    prompts:Mapped[List["Prompts"]] = relationship()
-    
+    # prompts:Mapped[List["Prompt"]] = relationship()
     
     def toJSON(self):
         return {
