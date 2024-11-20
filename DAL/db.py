@@ -182,8 +182,10 @@ def GET_user(user_id):
         db_cursor = init_cursor(mysql_client)
         db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
         res = db_cursor.fetchall()
-        res = date_helper.query_date_to_string(res)    
-        return res
+        res = date_helper.query_date_to_string(res)
+        if len(res) == 0:
+            raise ValueError()
+        return res[0]
 
 def Get_user_by_group(group_id):
     with init_connection() as mysql_client:
@@ -254,7 +256,9 @@ def GET_submission(submission_id):
         res = db_cursor.fetchall()
         
         res = date_helper.query_date_to_string(res)
-        return res
+        if len(res) == 0:
+            raise ValueError()
+        return res[0]
     
 def GET_submission_history(team_id):
     with init_connection() as mysql_client:
@@ -283,7 +287,9 @@ def GET_team_submission(team_id):
         res = db_cursor.fetchall()
         
         res = date_helper.query_date_to_string(res)
-        return res
+        if len(res) == 0:
+            raise ValueError()
+        return res[0]
 
 def GET_grader_assigned_submissions(grader_id):
     with init_connection() as mysql_client:
