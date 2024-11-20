@@ -3,9 +3,10 @@ from Helper import user
 from datetime import datetime
 import time
 ### CREATE ###
-def create_user():
+def create_user(group_id):
     password = user.random_password()
-    group_id = 2
+    if group_id > 2 or group_id < 0:
+        raise ValueError
     salt , hashed_pw = user.hash_password(password)
     current_date = datetime.now()
     date_string = f"{current_date.year}-{current_date.month}-{current_date.day}"
@@ -144,7 +145,7 @@ def get_all_assigned_submissions():
 
 ### UPDATE ###
 def update_user(user_id,name,username,email,school_name,grade,phonenumber,new_password,team_info):   
-    current_user = get_user(user_id)[0]
+    current_user = get_user(user_id)
     salt = current_user['salt'].encode("utf-8")
     if new_password:      
         hashed_pw = user.hash_password(new_password,salt)[1]                                    

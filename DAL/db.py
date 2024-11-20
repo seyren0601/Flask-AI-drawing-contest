@@ -188,7 +188,9 @@ def GET_user(user_id):
         db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
         res = db_cursor.fetchall()
         res = date_helper.query_date_to_string(res)
-        return res
+        if len(res) == 0:
+            raise ValueError()
+        return res[0]
 
 def Get_user_by_group(group_id):
     with init_connection() as mysql_client:
@@ -259,7 +261,9 @@ def GET_submission(submission_id):
         res = db_cursor.fetchall()
         
         res = date_helper.query_date_to_string(res)
-        return res
+        if len(res) == 0:
+            raise ValueError()
+        return res[0]
     
 def GET_submission_history(team_id):
     with init_connection() as mysql_client:
@@ -288,14 +292,20 @@ def GET_team_submission(team_id):
         res = db_cursor.fetchall()
         
         res = date_helper.query_date_to_string(res)
-        return res
+        if len(res) == 0:
+            raise ValueError()
+        return res[0]
 
 def GET_grader_assigned_submissions(grader_id):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"""SELECT * 
-                            FROM assigned_submissions 
-                            WHERE img_grader_id = {grader_id}  OR prompt_grader_id = {grader_id}""")
+        
+        sql = f"""SELECT assigned_submissions.submission_id, prompt, image, img_grader_id, prompt_grader_id, img_comment, prompt_comment, img_score, prompt_score, status, modified_date
+                FROM assigned_submissions
+                    INNER JOIN submission ON assigned_submissions.submission_id = submission.submission_id
+                    INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
+                WHERE img_grader_id = {grader_id}  OR prompt_grader_id = {grader_id}"""
+        db_cursor.execute(sql)
         
         res = db_cursor.fetchall()
         
@@ -315,7 +325,20 @@ def GET_assigned_submission(submission_id):
 def GET_all_assigned_submissions():
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"SELECT * FROM assigned_submissions")
+        sql = """WITH q AS(
+                    SELECT assigned_submissions.submission_id, name as team_name
+                    FROM assigned_submissions 
+                        INNER JOIN submission ON assigned_submissions.submission_id = submission.submission_id
+                        INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
+                        INNER JOIN user ON user_id = team_id
+                )
+                SELECT assigned_submissions.submission_id, team_name, img_grader_id, img.name as img_grader_name, prompt_grader_id, prompt.name as prompt_grader_name, img_comment, prompt_comment, img_score, prompt_score, status, modified_date
+                FROM assigned_submissions
+                    INNER JOIN user as img ON assigned_submissions.img_grader_id = img.user_id
+                    INNER JOIN user as prompt ON assigned_submissions.prompt_grader_id = prompt.user_id
+                    INNER JOIN q ON assigned_submissions.submission_id = q.submission_id;
+                    """
+        db_cursor.execute(sql)
         
         res = db_cursor.fetchall()
         

@@ -20,8 +20,17 @@ CORS(app)
 @api.route("/user/create",methods = ['GET','POST'])
 class user_create(Resource):
     def get(self):
-        user = controller.create_user()
-        return user
+        arg = request.args.get('group_id')
+        if arg:
+            group_id = int(arg)
+        else:
+            group_id = 2
+        try:
+            user = controller.create_user(group_id)
+            return user
+        except ValueError:
+            return Response(status=400, response="Group id invalid")
+        
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('name',type=str,required=True,location='json')
@@ -105,8 +114,11 @@ class user_read(Resource):
         user_id = request.args.get('user_id')
         group_id = request.args.get('group_id')
         if user_id:
-            user = controller.get_user(user_id)
-            return user
+            try:
+                user = controller.get_user(user_id)
+                return user
+            except ValueError :
+                return Response(status=400,response="User not found")            
         elif group_id : 
             user = controller.get_user_by_group(group_id)
             return user
@@ -125,7 +137,7 @@ class user_login(Resource):
         username = arguments['username']
         password = arguments['password']
         user_id,group_id = controller.user_authenticate(username, password)
-        if user_id and group_id:
+        if user_id != None and group_id != None:
             return {'user_id':user_id,'group_id':group_id}
         else:
             return Response(status=401, response="Failed Authentication")
@@ -155,11 +167,17 @@ class submission_read(Resource):
         submission_id = request.args.get('submission_id')
         team_id = request.args.get('team_id')
         if submission_id:
-            submission = controller.get_submission(submission_id)
-            return submission
+            try:
+                submission = controller.get_submission(submission_id)
+                return submission
+            except ValueError:
+                return Response(status=400,response="Submission not found")
         if team_id:
-            submission = controller.get_team_submission(team_id)
-            return submission
+            try:            
+                submission = controller.get_team_submission(team_id)
+                return submission
+            except ValueError as e:
+                return Response(status=400,response="Team not found")
         submissions = controller.get_all_submissions()
         return submissions
 
