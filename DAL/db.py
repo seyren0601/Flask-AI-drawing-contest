@@ -288,9 +288,13 @@ def GET_team_submission(team_id):
 def GET_grader_assigned_submissions(grader_id):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"""SELECT * 
-                            FROM assigned_submissions 
-                            WHERE img_grader_id = {grader_id}  OR prompt_grader_id = {grader_id}""")
+        
+        sql = f"""SELECT assigned_submissions.submission_id, prompt, image, img_grader_id, prompt_grader_id, img_comment, prompt_comment, img_score, prompt_score, status, modified_date
+                FROM assigned_submissions
+                    INNER JOIN submission ON assigned_submissions.submission_id = submission.submission_id
+                    INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
+                WHERE img_grader_id = {grader_id}  OR prompt_grader_id = {grader_id}"""
+        db_cursor.execute(sql)
         
         res = db_cursor.fetchall()
         
