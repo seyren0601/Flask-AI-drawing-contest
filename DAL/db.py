@@ -6,6 +6,8 @@ import logging
 import random
 from Helper import date_helper
 from dotenv import load_dotenv
+from Models.user import User
+from flask_sa import db
 
 load_dotenv()
 
@@ -170,19 +172,22 @@ def CREATE_assigned_submission(**kwargs):
 
 ### READ ###
 def GET_all_users():
-    with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client)
-        db_cursor.execute("SELECT * FROM user")
-        res = db_cursor.fetchall()
-        res = date_helper.query_date_to_string(res)
-        return res
+    # with init_connection() as mysql_client:
+    #     db_cursor = init_cursor(mysql_client)
+    #     db_cursor.execute("SELECT * FROM user")
+    #     res = db_cursor.fetchall()
+    #     res = date_helper.query_date_to_string(res)
+    #     return res
+    
+    users = db.session.query(User)
+    return [user.toJSON() for user in users]
     
 def GET_user(user_id):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
         res = db_cursor.fetchall()
-        res = date_helper.query_date_to_string(res)    
+        res = date_helper.query_date_to_string(res)
         return res
 
 def Get_user_by_group(group_id):

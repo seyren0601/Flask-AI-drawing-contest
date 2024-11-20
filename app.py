@@ -4,36 +4,17 @@ from flask_cors import CORS
 from flask_restx import reqparse
 from flask_restx import Api, Resource
 from Controllers import controller
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapped, mapped_column
-import json
-
+from flask_sa import db
 
 class Base(DeclarativeBase):
     pass
 
-db = SQLAlchemy()
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:porsche0601@localhost/ai_drawing_contest" # To be hidden
 db.init_app(app)
 api = Api(app)
 CORS(app)
-
-with app.app_context():
-    db.create_all()
-    
-class User(db.Model):
-    user_id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(unique=True)
-    email: Mapped[str]
-    
-    def toJSON(self):
-        return {
-            "user_id":self.user_id, 
-            "username":self.username,
-            "email":self.email
-        }
 
 ### CREATE ###
 @api.route("/user/create",methods = ['GET','POST'])
@@ -130,8 +111,8 @@ class user_read(Resource):
             user = controller.get_user_by_group(group_id)
             return user
         else:
-            users = db.session.query(User)
-            return [user.toJSON() for user in users]
+            users = controller.get_all_user()
+            return users
         
 @api.route("/user/authenticate", methods=['POST'])
 class user_login(Resource):
