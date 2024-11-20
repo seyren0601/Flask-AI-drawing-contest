@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from Models.user import User
 from Models.prompt import Prompt
 from flask_sa import db
+import sqlalchemy.sql
 
 load_dotenv()
 
@@ -220,7 +221,12 @@ def GET_team_prompts(team_id):
         
     #     res = date_helper.query_date_to_string(res)
     #     return res
-    prompts = db.session.query(Prompt).where(Prompt.team_id == team_id)
+    
+    prompts = db.session.scalars(
+        sqlalchemy.select((Prompt))
+        .where(Prompt.team_id == team_id)
+    ).all()
+    
     return [prompt.toJson() for prompt in prompts]
 
 def GET_prompt(prompt_id):
