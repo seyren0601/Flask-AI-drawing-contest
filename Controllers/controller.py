@@ -92,7 +92,6 @@ def user_authenticate(username, password):
     if len(query_res) == 0:
         return None
     user_authentication = query_res[0]
-    print(f"user found = {len(query_res)}")
     salt = user_authentication['salt'].encode('utf-8')
     hashed_pw = user_authentication['hashed_pw'].encode('utf-8')
     
