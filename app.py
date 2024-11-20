@@ -14,8 +14,17 @@ CORS(app)
 @api.route("/user/create",methods = ['GET','POST'])
 class user_create(Resource):
     def get(self):
-        user = controller.create_user()
-        return user
+        arg = request.args.get('group_id')
+        if arg:
+            group_id = int(arg)
+        else:
+            group_id = 2
+        try:
+            user = controller.create_user(group_id)
+            return user
+        except ValueError:
+            return Response(status=400, response="Group id invalid")
+        
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('name',type=str,required=True,location='json')
