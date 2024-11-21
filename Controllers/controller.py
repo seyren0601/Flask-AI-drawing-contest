@@ -1,6 +1,7 @@
 from DAL import db,model
 from Helper import user
 from datetime import datetime
+from Models.user import User
 import time
 ### CREATE ###
 def create_user(group_id,**kwargs):
@@ -12,26 +13,25 @@ def create_user(group_id,**kwargs):
     date_string = f"{current_date.year}-{current_date.month}-{current_date.day}"
 
     if len(kwargs.items()) > 0:
-        insert_data = {
-            "group_id": group_id,
-            "salt": salt,
-            "hashed_pw": hashed_pw,
-            "register_date":date_string,
-            "name":kwargs['name'],
-            "school_name":kwargs['school_name'],
-            "grade":kwargs['grade'],
-            "phone_number":kwargs['phone_number'],
-            "email":kwargs['email'],
-            "team_info": kwargs['team_info']
-        }
+        insert_data = User(
+            group_id = group_id,
+            salt = salt,
+            hashed_pw = hashed_pw,
+            register_date = date_string,
+            name = kwargs["name"],
+            email = kwargs["email"],
+            phone_number = kwargs["phone_number"],
+            school_name =  kwargs["school_name"],
+            grade =  kwargs["grade"],       
+            team_info = kwargs["team_info"]
+        )
     else:
-        insert_data = {
-            "group_id": group_id,
-            "salt": salt,
-            "hashed_pw": hashed_pw,
-            "register_date":date_string,
-        }
-    print(insert_data.items())
+        insert_data = User(
+            group_id = group_id,
+            salt = salt,
+            hashed_pw = hashed_pw,
+            register_date = date_string,        
+        )
     new_user = db.CREATE_user(insert_data)    
     return {"user_id":new_user["user_id"],
             "username": new_user["username"],

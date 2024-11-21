@@ -31,26 +31,7 @@ def init_cursor(client):
 
 ### CREATE ###
 def CREATE_user(insert_data):   
-    if len(insert_data.items()) == 4:
-        new_User = User(
-        group_id = insert_data["group_id"],
-        salt = insert_data["salt"],
-        hashed_pw = insert_data["hashed_pw"],
-        register_date = insert_data["register_date"]        
-    )
-    else:
-        new_User = User(
-            group_id = insert_data["group_id"],
-            salt = insert_data["salt"],
-            hashed_pw = insert_data["hashed_pw"],
-            register_date = insert_data["register_date"],
-            name = insert_data["name"],
-            email = insert_data["email"],
-            phone_number = insert_data["phone_number"],
-            school_name =  insert_data["school_name"],
-            grade =  insert_data["grade"],       
-            team_info = insert_data["team_info"]
-        )
+    new_User = insert_data    
     db.session.add(new_User)
     db.session.commit()
     # Create user name
