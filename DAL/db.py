@@ -219,10 +219,11 @@ def GET_prompt(prompt_id):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         db_cursor.execute(f"SELECT * FROM prompts WHERE prompt_id = {prompt_id}")
-        res = db_cursor.fetchall()
-        
+        res = db_cursor.fetchall()        
         res = date_helper.query_date_to_string(res)
-        return res
+        if len(res) == 0:
+            raise ValueError()
+        return res[0]
 
 def GET_all_prompts():
     with init_connection() as mysql_client:
@@ -315,7 +316,9 @@ def GET_assigned_submission(submission_id):
         res = db_cursor.fetchall()
         
         res = date_helper.query_date_to_string(res)
-        return res
+        if len(res) == 0:
+            raise ValueError
+        return res[0]
 
 def GET_all_assigned_submissions():
     with init_connection() as mysql_client:

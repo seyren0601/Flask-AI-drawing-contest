@@ -148,8 +148,11 @@ class prompts_read(Resource):
             prompts = controller.get_team_prompts(team_id)
             return prompts
         if prompt_id:
-            prompt = controller.get_prompt(prompt_id)
-            return prompt
+            try:
+                prompt = controller.get_prompt(prompt_id)
+                return prompt
+            except ValueError:
+                return Response(status=400,response="Prompt not found")  
         prompts = controller.get_all_prompts()
         return prompts
 
@@ -200,8 +203,11 @@ class assigned_submissions(Resource):
             assigned_submissions = controller.get_grader_assigned_submissions(grader_id)
             return assigned_submissions
         if submission_id:
-            assigned_submission = controller.get_assigned_submission(submission_id)
-            return assigned_submission
+            try:
+                assigned_submission = controller.get_assigned_submission(submission_id)
+                return assigned_submission
+            except ValueError:
+                return Response(status=400, response='Assigned submission not found')
         all_assigned_submissions = controller.get_all_assigned_submissions()
         return all_assigned_submissions
 
