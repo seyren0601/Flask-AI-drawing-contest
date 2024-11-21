@@ -30,60 +30,53 @@ def init_cursor(client):
     return db_cursor
 
 ### CREATE ###
-def CREATE_user(group_id,salt,hashed_pw,date_string):
-    with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client)
-        query = """
-            INSERT INTO user (group_id,salt, hashed_pw, register_date)
-            VALUES (%s, %s,%s, %s)
-        """
-        db_cursor.execute(query, (group_id,salt,hashed_pw,date_string))
-        mysql_client.commit()
-    
-        db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")    
-        user = db_cursor.fetchall()    
-        user = date_helper.query_date_to_string(user)[0]
-        user_id = user['user_id']
-        username = "usr" + str(user_id).zfill(5)
-        
-        db_cursor.execute(f"UPDATE user SET username=\"{username}\" WHERE user_id = {user_id}")
-        mysql_client.commit()
-        
-        db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")
-        user = db_cursor.fetchall()    
-        user = date_helper.query_date_to_string(user)
-        return user[0]
+def CREATE_user_auto(group_id,salt,hashed_pw,date_string):   
+    new_User = User(
+        group_id = group_id,
+        salt = salt,
+        hashed_pw = hashed_pw,
+        register_date = date_string
+    )
+    db.session.add(new_User)
+    db.session.commit()
+    # Create user name
+    user_id = new_User.user_id
+    username = "usr" + str(user_id).zfill(5)
+    new_User.username = username
+    db.session.commit()
+    # Return user
+    user = db.session.scalars(
+        sqlalchemy.select((User))
+        .where(User.user_id == new_User.user_id)
+    ).one()
+    return user.toJSON()
 
-def CREATE_user_v2(insert_data):
-    with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client)
-        params = []
-        inserts = []
-        for key , value in insert_data.items():
-            if value is not None:
-                inserts.append(f"{key}")
-                params.append(value)    
-
-        query = f"""
-            INSERT INTO user ({', '.join(inserts)})
-            VALUES ({','.join(['%s'] * len(params))})
-        """
-        db_cursor.execute(query,tuple(params))
-        mysql_client.commit()
-        
-        db_cursor.execute(f"SELECT * FROM user WHERE user_id = {db_cursor.lastrowid}")    
-        user = db_cursor.fetchall()    
-        user = date_helper.query_date_to_string(user)[0]
-        user_id = user['user_id']
-        username = "usr" + str(user_id).zfill(5)
-        
-        db_cursor.execute(f"UPDATE user SET username=\"{username}\" WHERE user_id = {user_id}")
-        mysql_client.commit()
-    
-        db_cursor.execute(f"SELECT * FROM user WHERE user_id = {user_id}")    
-        user = db_cursor.fetchall()    
-        user = date_helper.query_date_to_string(user)
-        return user[0]
+def CREATE_user_manually(insert_data):
+    new_User = User(
+        group_id = insert_data["group_id"],
+        salt = insert_data["salt"],
+        hashed_pw = insert_data["hashed_pw"],
+        register_date = insert_data["register_date"],
+        name = insert_data["name"],
+        email = insert_data["email"],
+        phone_number = insert_data["phone_number"],
+        school_name =  insert_data["school_name"],
+        grade =  insert_data["grade"],       
+        team_info = insert_data["team_info"],                        
+    )   
+    db.session.add(new_User)
+    db.session.commit()
+    # Create user name
+    user_id = new_User.user_id
+    username = "usr" + str(user_id).zfill(5)
+    new_User.username = username
+    db.session.commit() 
+    # Return user
+    user = db.session.scalars(
+        sqlalchemy.select((User))
+        .where(User.user_id == new_User.user_id)
+    ).one()
+    return user.toJSON()
 
 def CREATE_prompt(team_id,date_time,prompt,image):
     with init_connection() as mysql_client:

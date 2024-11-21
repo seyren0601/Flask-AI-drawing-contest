@@ -11,7 +11,7 @@ class Base(DeclarativeBase):
     pass
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:porsche0601@localhost/ai_drawing_contest" # To be hidden
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:Minhy1208@localhost/ai_drawing_contest" # To be hidden
 db.init_app(app)
 api = Api(app)
 CORS(app)
@@ -26,7 +26,7 @@ class user_create(Resource):
         else:
             group_id = 2
         try:
-            user = controller.create_user(group_id)
+            user = controller.create_user_auto(group_id)
             return user
         except ValueError:
             return Response(status=400, response="Group id invalid")
@@ -49,7 +49,7 @@ class user_create(Resource):
         email = argument['email']
         team_info = argument['team_info']
 
-        user = controller.create_user_v2(name,school_name,grade,phone_number,email,team_info)
+        user = controller.create_user_manually(name,school_name,grade,phone_number,email,team_info)
         return user
 
 
