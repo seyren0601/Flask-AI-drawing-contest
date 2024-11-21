@@ -27,18 +27,23 @@ CORS(app)
 @api.route("/user/create",methods = ['GET','POST'])
 class user_create(Resource):
     def get(self):
-        arg = request.args.get('group_id')
+        arg = request.args.get('group_id')    
         if arg:
             group_id = int(arg)
         else:
-            group_id = 2
+            group_id = 2     
         try:
-            user = controller.create_user_auto(group_id)
+            user = controller.create_user(group_id)
             return user
         except ValueError:
             return Response(status=400, response="Group id invalid")
         
     def post(self):
+        arg = request.args.get('group_id')
+        if arg:
+            group_id = int(arg)
+        else:
+            group_id = 2     
         parser = reqparse.RequestParser()
         parser.add_argument('name',type=str,required=True,location='json')
         parser.add_argument('school_name',type=str,required=False,location='json')
@@ -55,11 +60,14 @@ class user_create(Resource):
         phone_number = argument['phone_number']
         email = argument['email']
         team_info = argument['team_info']
-
-        user = controller.create_user_manually(name,school_name,grade,phone_number,email,team_info)
-        return user
-
-
+        try:
+            user = controller.create_user(group_id,name=name,school_name=school_name,
+                                        grade=grade,phone_number=phone_number,
+                                        email=email,team_info=team_info)
+            return user
+        except ValueError:
+            return Response(status=400, response="Group id invalid")
+        
 @api.route("/prompt/create",methods=['POST'])
 class prompt_create(Resource):
     def post(self):

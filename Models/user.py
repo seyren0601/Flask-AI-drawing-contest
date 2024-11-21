@@ -10,7 +10,7 @@ class User(db.Model):
     # User info
     user_id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
-    email: Mapped[str]
+    email: Mapped[str] 
     phone_number: Mapped[str]
     school_name: Mapped[str]
     grade: Mapped[str]
