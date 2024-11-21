@@ -14,6 +14,7 @@ class Base(DeclarativeBase):
 
 app = Flask(__name__)
 
+load_dotenv()
 db_user = os.environ["DB_USER"]
 db_password = os.environ["DB_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql://{db_user}:{db_password}@localhost/ai_drawing_contest" # To be hidden
