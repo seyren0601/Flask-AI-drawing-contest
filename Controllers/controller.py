@@ -11,7 +11,9 @@ def create_user_auto(group_id):
     current_date = datetime.now()
     date_string = f"{current_date.year}-{current_date.month}-{current_date.day}"
     new_user = db.CREATE_user_auto(group_id,salt,hashed_pw,date_string)    
-    return new_user
+    return {"user_id":new_user["user_id"],
+            "username": new_user["username"],
+            "password": password}
 
 def create_user_manually(name,school_name,grade,phone_number,email,team_info):
     password = user.random_password()
@@ -33,7 +35,9 @@ def create_user_manually(name,school_name,grade,phone_number,email,team_info):
         "team_info": team_info
     }
     new_user = db.CREATE_user_manually(insert_data)
-    return new_user
+    return {"user_id":new_user["user_id"],
+            "username": new_user["username"],
+            "password": password}
 
 def create_prompt(team_id,prompt):
     team_prompts = get_team_prompts(team_id)
