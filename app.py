@@ -4,9 +4,15 @@ from flask_cors import CORS
 from flask_restx import reqparse
 from flask_restx import Api, Resource
 from Controllers import controller
+from sqlalchemy.orm import DeclarativeBase
+from flask_sa import db
 
+class Base(DeclarativeBase):
+    pass
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:porsche0601@localhost/ai_drawing_contest" # To be hidden
+db.init_app(app)
 api = Api(app)
 CORS(app)
 

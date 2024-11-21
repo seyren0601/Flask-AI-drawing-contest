@@ -6,6 +6,10 @@ import logging
 import random
 from Helper import date_helper
 from dotenv import load_dotenv
+from Models.user import User
+from Models.prompt import Prompt
+from flask_sa import db
+import sqlalchemy.sql
 
 load_dotenv()
 
@@ -170,12 +174,15 @@ def CREATE_assigned_submission(**kwargs):
 
 ### READ ###
 def GET_all_users():
-    with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client)
-        db_cursor.execute("SELECT * FROM user")
-        res = db_cursor.fetchall()
-        res = date_helper.query_date_to_string(res)
-        return res
+    # with init_connection() as mysql_client:
+    #     db_cursor = init_cursor(mysql_client)
+    #     db_cursor.execute("SELECT * FROM user")
+    #     res = db_cursor.fetchall()
+    #     res = date_helper.query_date_to_string(res)
+    #     return res
+    
+    users = db.session.query(User)
+    return [user.toJSON() for user in users]
     
 def GET_user(user_id):
     with init_connection() as mysql_client:
@@ -204,16 +211,23 @@ def GET_user_authentication(username):
         return res
 
 def GET_team_prompts(team_id):
-    with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"""SELECT team_id, name, prompt_id, date_time, prompt, image, submitted
-                            FROM user INNER JOIN prompts ON user.user_id = prompts.team_id
-                            WHERE team_id = {team_id}
-                        """)
-        res = db_cursor.fetchall()
+    # with init_connection() as mysql_client:
+    #     db_cursor = init_cursor(mysql_client)
+    #     db_cursor.execute(f"""SELECT team_id, name, prompt_id, date_time, prompt, image, submitted
+    #                         FROM user INNER JOIN prompts ON user.user_id = prompts.team_id
+    #                         WHERE team_id = {team_id}
+    #                     """)
+    #     res = db_cursor.fetchall()
         
-        res = date_helper.query_date_to_string(res)
-        return res
+    #     res = date_helper.query_date_to_string(res)
+    #     return res
+    
+    prompts = db.session.scalars(
+        sqlalchemy.select((Prompt))
+        .where(Prompt.team_id == team_id)
+    ).all()
+    
+    return [prompt.toJson() for prompt in prompts]
 
 def GET_prompt(prompt_id):
     with init_connection() as mysql_client:
@@ -225,13 +239,16 @@ def GET_prompt(prompt_id):
         return res
 
 def GET_all_prompts():
-    with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"SELECT * FROM prompts")
-        res = db_cursor.fetchall()
+    # with init_connection() as mysql_client:
+    #     db_cursor = init_cursor(mysql_client)
+    #     db_cursor.execute(f"SELECT * FROM prompts")
+    #     res = db_cursor.fetchall()
         
-        res = date_helper.query_date_to_string(res)
-        return res
+    #     res = date_helper.query_date_to_string(res)
+    #     return res
+        
+        prompts = db.session.query(Prompt)
+        return [prompt.toJson() for prompt in prompts]
 
 def GET_all_submissions():
     with init_connection() as mysql_client:
