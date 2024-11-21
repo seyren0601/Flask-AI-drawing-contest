@@ -6,12 +6,19 @@ from flask_restx import Api, Resource
 from Controllers import controller
 from sqlalchemy.orm import DeclarativeBase
 from flask_sa import db
+from dotenv import load_dotenv
+import os
 
 class Base(DeclarativeBase):
     pass
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:porsche0601@localhost/ai_drawing_contest" # To be hidden
+
+load_dotenv()
+db_user = os.environ["DB_USER"]
+db_password = os.environ["DB_PASSWORD"]
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql://{db_user}:{db_password}@localhost/ai_drawing_contest" # To be hidden
+
 db.init_app(app)
 api = Api(app)
 CORS(app)
