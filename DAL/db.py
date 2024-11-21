@@ -46,33 +46,6 @@ def CREATE_user(insert_data):
     ).one()
     return user.toJSON()
 
-def CREATE_user_manually(insert_data):
-    new_User = User(
-        group_id = insert_data["group_id"],
-        salt = insert_data["salt"],
-        hashed_pw = insert_data["hashed_pw"],
-        register_date = insert_data["register_date"],
-        name = insert_data["name"],
-        email = insert_data["email"],
-        phone_number = insert_data["phone_number"],
-        school_name =  insert_data["school_name"],
-        grade =  insert_data["grade"],       
-        team_info = insert_data["team_info"],                        
-    )   
-    db.session.add(new_User)
-    db.session.commit()
-    # Create user name
-    user_id = new_User.user_id
-    username = "usr" + str(user_id).zfill(5)
-    new_User.username = username
-    db.session.commit() 
-    # Return user
-    user = db.session.scalars(
-        sqlalchemy.select((User))
-        .where(User.user_id == new_User.user_id)
-    ).one()
-    return user.toJSON()
-
 def CREATE_prompt(team_id,date_time,prompt,image):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
