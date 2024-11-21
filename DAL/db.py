@@ -423,6 +423,14 @@ def DELETE_assigned_submission(submission_id):
         mysql_client.commit()
 
 ### Custom query ###
+def DELETE_user(user_id):
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        
+        sql = f"DELETE FROM user WHERE user_id = {user_id}"
+        db_cursor.execute(sql)
+        mysql_client.commit()
+
 def execute_select(query):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)

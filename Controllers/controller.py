@@ -178,6 +178,9 @@ def update_assigned_submission(submission_id, img_score, prompt_score, img_comme
 
 
 ### DELETE ###
+def delete_user(user_id):
+    user_id = db.DELETE_user(user_id)
+
 def delete_assigned_submission(submission_id):
     db.DELETE_assigned_submission(submission_id)
     

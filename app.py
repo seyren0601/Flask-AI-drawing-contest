@@ -273,6 +273,16 @@ class assigned_submission_update(Resource):
 
 
 ### DELETE ###
+@api.route("/user/delete", methods=['DELETE'])
+class user_delete(Resource):
+    def delete(self):
+        user_id = request.args.get('user_id')
+        if user_id != None:
+            controller.delete_user(user_id)
+        else:
+            return Response(status=400, reponse="Invalid user_id")
+        return Response(status=200)
+
 @api.route("/assigned_submission/delete", methods=['DELETE'])
 class assigned_submission_update(Resource):
     def delete(self):
