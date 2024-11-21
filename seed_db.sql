@@ -27,7 +27,7 @@ CREATE TABLE prompts(
     image LONGTEXT,
     submitted boolean,
     PRIMARY KEY(prompt_id),
-    FOREIGN KEY (team_id) REFERENCES user(user_id)
+    FOREIGN KEY (team_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE submission(
@@ -36,7 +36,7 @@ CREATE TABLE submission(
     submit_date datetime,   
     assigned boolean,
     PRIMARY KEY(submission_id),
-    FOREIGN KEY(prompt_id) REFERENCES prompts(prompt_id)
+    FOREIGN KEY(prompt_id) REFERENCES prompts(prompt_id) ON DELETE CASCADE
 );
 
 CREATE TABLE assigned_submissions(
@@ -50,9 +50,9 @@ CREATE TABLE assigned_submissions(
     status boolean,
     modified_date datetime,
     PRIMARY KEY(submission_id, img_grader_id, prompt_grader_id),
-    FOREIGN KEY(submission_id) REFERENCES submission(submission_id),
-	FOREIGN KEY(img_grader_id) REFERENCES user(user_id),    
-    FOREIGN KEY(prompt_grader_id) REFERENCES user(user_id)
+    FOREIGN KEY(submission_id) REFERENCES submission(submission_id) ON DELETE CASCADE,
+	FOREIGN KEY(img_grader_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY(prompt_grader_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
 INSERT INTO user(username, name, email, group_id)

@@ -398,6 +398,23 @@ def UPDATE_assigned_submission(submission_id, params:dict, update_time):
         mysql_client.commit()
         
 ### DELETE ###
+def DELETE_user(user_id):
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        
+        user = GET_user(user_id)
+        if user['group_id'] == 1:
+            assigned_submisssions = GET_grader_assigned_submissions(user_id)
+            for assigned_submission in assigned_submisssions:
+                submission_id = assigned_submission['submission_id']
+            sql = f"""UPDATE submission SET assigned = 0
+                    WHERE submission_id = {submission_id}"""
+            db_cursor.execute(sql)
+        
+        sql = f"DELETE FROM user WHERE user_id = {user_id}"
+        db_cursor.execute(sql)
+        mysql_client.commit()
+
 def DELETE_all_ungraded_assigned_submissions():
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
@@ -423,14 +440,6 @@ def DELETE_assigned_submission(submission_id):
         mysql_client.commit()
 
 ### Custom query ###
-def DELETE_user(user_id):
-    with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client)
-        
-        sql = f"DELETE FROM user WHERE user_id = {user_id}"
-        db_cursor.execute(sql)
-        mysql_client.commit()
-
 def execute_select(query):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
