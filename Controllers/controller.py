@@ -38,7 +38,7 @@ def create_user_v2(name,school_name,grade,phone_number,email,team_info):
 def create_prompt(team_id,prompt):
     team_prompts = get_team_prompts(team_id)
     
-    if len(team_prompts) == 5:
+    if len(team_prompts) == 10:
         raise PermissionError
     
     image = model.image_generate(prompt)
