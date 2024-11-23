@@ -393,7 +393,10 @@ def UPDATE_assigned_submission(submission_id, params:dict, update_time):
         db_cursor.execute(sql)
         res = db_cursor.fetchall()
         obj_after_grade = date_helper.query_date_to_string(res)[0]
-        if obj_after_grade['img_score']  and ['prompt_score']:
+        if obj_after_grade['img1_score']\
+            and obj_after_grade['prompt1_score']\
+            and obj_after_grade['img2_score']\
+            and obj_after_grade['prompt2_score']:
             sql = f"""UPDATE assigned_submissions
                     SET status = 1
                     WHERE submission_id = {submission_id}"""

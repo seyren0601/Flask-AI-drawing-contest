@@ -167,13 +167,19 @@ def update_user(user_id,name,username,email,school_name,grade,phonenumber,new_pa
     return update_user
 
 
-def update_assigned_submission(submission_id, img_score, prompt_score, img_comment,prompt_comment):
+def update_assigned_submission(submission_id, img1_score,prompt1_score, img1_comment, prompt1_comment,
+                                                img2_score,prompt2_score, img2_comment, prompt2_comment):
     update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     params = {
-        "img_score":img_score,         
-        "prompt_score":prompt_score, 
-        "img_comment":img_comment,        
-        "prompt_comment":prompt_comment
+        "img1_score":img1_score,
+        "prompt1_score":prompt1_score,
+        "img1_comment":img1_comment,
+        "prompt1_comment":prompt1_comment,
+        
+        "img2_score":img2_score,
+        "prompt2_score":prompt2_score,
+        "img2_comment":img2_comment,
+        "prompt2_comment":prompt2_comment
     }
     db.UPDATE_assigned_submission(submission_id, params, update_time)
 

@@ -257,20 +257,30 @@ class assigned_submission_update(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('submission_id',type=int,required=True,location='json')
-        parser.add_argument('img_score',type=float,required=False,location='json')        
-        parser.add_argument('prompt_score',type=float,required=False,location='json')
-        parser.add_argument('img_comment', type=str,required=False,location='json', default="")        
-        parser.add_argument('prompt_comment', type=str,required=False,location='json', default="")
+        parser.add_argument('img1_score',type=float,required=False,location='json')
+        parser.add_argument('img2_score',type=float,required=False,location='json')
+        parser.add_argument('prompt1_score',type=float,required=False,location='json')
+        parser.add_argument('prompt2_score',type=float,required=False,location='json')
+        parser.add_argument('img1_comment', type=str,required=False,location='json', default="")
+        parser.add_argument('img2_comment', type=str,required=False,location='json', default="")
+        parser.add_argument('prompt1_comment', type=str,required=False,location='json', default="")
+        parser.add_argument('prompt2_comment', type=str,required=False,location='json', default="")
         
         argument = parser.parse_args()
         
         submission_id = argument['submission_id']
-        img_score = argument['img_score']        
-        prompt_score = argument['prompt_score']
-        img_comment = argument['img_comment']        
-        prompt_comment = argument['prompt_comment']
+        img1_score = argument['img1_score']
+        prompt1_score = argument['prompt1_score']
+        img1_comment = argument['img1_comment']
+        prompt1_comment = argument['prompt1_comment']
+        
+        img2_score = argument['img2_score']
+        prompt2_score = argument['prompt2_score']
+        img2_comment = argument['img2_comment']
+        prompt2_comment = argument['prompt2_comment']
         try:
-            controller.update_assigned_submission(submission_id, img_score,prompt_score, img_comment, prompt_comment)
+            controller.update_assigned_submission(submission_id, img1_score,prompt1_score, img1_comment, prompt1_comment,
+                                                                 img2_score,prompt2_score, img2_comment, prompt2_comment)
         except ValueError:
             return Response(status=400, response="Grade already exists")
         except PermissionError:
