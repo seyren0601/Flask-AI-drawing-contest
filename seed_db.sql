@@ -19,6 +19,13 @@ CREATE TABLE user(
     PRIMARY KEY(user_id)
 );
 
+CREATE TABLE submission(
+	submission_id int auto_increment,
+    submit_date datetime,
+    assigned boolean,
+    PRIMARY KEY(submission_id)
+);
+
 CREATE TABLE prompts(
     prompt_id int auto_increment,
     team_id int,
@@ -26,27 +33,24 @@ CREATE TABLE prompts(
     prompt LONGTEXT,
     image LONGTEXT,
     submitted boolean,
+    submission_id int,
     PRIMARY KEY(prompt_id),
-    FOREIGN KEY (team_id) REFERENCES user(user_id) ON DELETE CASCADE
-);
-
-CREATE TABLE submission(
-	submission_id int auto_increment,
-    prompt_id int,
-    submit_date datetime,   
-    assigned boolean,
-    PRIMARY KEY(submission_id),
-    FOREIGN KEY(prompt_id) REFERENCES prompts(prompt_id) ON DELETE CASCADE
+    FOREIGN KEY (team_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (submission_id) REFERENCES submission(submission_id) ON DELETE CASCADE
 );
 
 CREATE TABLE assigned_submissions(
     submission_id int,
-    img_grader_id int,    
+    img_grader_id int,
     prompt_grader_id int,
-    img_comment text,    
-    prompt_comment text,
-    img_score float,    
-    prompt_score float,
+    img1_comment text,
+    img2_comment text,
+    prompt1_comment text,
+    prompt2_comment text,
+    img1_score float,
+    img2_score float,
+    prompt1_score float,
+    prompt2_score float,
     status boolean,
     modified_date datetime,
     PRIMARY KEY(submission_id, img_grader_id, prompt_grader_id),
@@ -67,19 +71,19 @@ VALUES
 INSERT INTO user(username, name, group_id, salt, hashed_pw)
 VALUES("usr00006", "team_3", 2, "$2b$12$BZyS/bsY816Aw5tZADVMLe", "$2b$12$BZyS/bsY816Aw5tZADVMLeSGEklXB2346NneyjXEPN/CcRXjcslou");
     
-INSERT INTO prompts(team_id, prompt, image, submitted)
+INSERT INTO submission(submit_date, assigned)
 VALUES
-	(2, "abc", "b64", 1),
-    (2, "xyz", "b64", 0),
-    (2, "qwerty", "b64", 0),
-    (4, "abc", "b64", 0),
-    (4, "xyz", "b64", 1),
-    (4, "qwerty", "b64", 0);
+	("2024-11-23", 0),
+    ("2024-11-23", 0);
 
-INSERT INTO submission(prompt_id, assigned)
+INSERT INTO prompts(team_id, prompt, image, submitted, submission_id)
 VALUES
-	(1,  0),
-    (5,  0);
+	(2, "abc", "b64", 1, 1),
+    (2, "xyz", "b64", 1, 1),
+    (2, "qwerty", "b64", 0, null),
+    (4, "abc", "b64", 0, null),
+    (4, "xyz", "b64", 1, 2),
+    (4, "qwerty", "b64", 1, 2);
 
 -- INSERT INTO submission(prompt_id, assigned)
 -- VALUES
