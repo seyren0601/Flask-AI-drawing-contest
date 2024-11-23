@@ -113,7 +113,7 @@ class user_read(Resource):
             try:
                 user = controller.get_user(user_id)
                 return user
-            except ValueError :
+            except ValueError:
                 return Response(status=400,response="User not found")            
         elif group_id : 
             user = controller.get_user_by_group(group_id)
@@ -296,9 +296,12 @@ class user_delete(Resource):
     def delete(self):
         user_id = request.args.get('user_id')
         if user_id != None:
-            controller.delete_user(user_id)
+            try:
+                controller.delete_user(user_id)
+            except ValueError:
+                return Response(status=400, response="Invalid user_id")
         else:
-            return Response(status=400, reponse="Invalid user_id")
+            return Response(status=400, response="Invalid user_id")
         return Response(status=200)
 
 @api.route("/assigned_submission/delete", methods=['DELETE'])

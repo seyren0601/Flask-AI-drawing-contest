@@ -532,7 +532,7 @@ def DELETE_user(user_id):
         elif user['group_id'] == 2:
             prompts = GET_team_prompts(user_id)
             for prompt in prompts:                
-                if prompt['submitted'] == 1:
+                if bool(prompt['submitted']):
                     submission_id = prompt["submission_id"]
                     sql = f"DELETE FROM submission WHERE submission_id = {submission_id}"
                     db_cursor.execute(sql)
