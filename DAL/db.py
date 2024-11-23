@@ -363,6 +363,8 @@ def GET_grader_assigned_submissions(grader_id):
         
         res = db_cursor.fetchall()
         res = date_helper.query_date_to_string(res)
+        
+
         merged_data = defaultdict(lambda: {
             "submission_id": None,
             "prompt1": None,
@@ -382,7 +384,6 @@ def GET_grader_assigned_submissions(grader_id):
             "status": None,
             "modified_date": None
         })
-
         for row in res:
             submission_id = row["submission_id"]
             entry = merged_data[submission_id]
@@ -528,7 +529,15 @@ def DELETE_user(user_id):
             sql = f"""UPDATE submission SET assigned = 0
                     WHERE submission_id = {submission_id}"""
             db_cursor.execute(sql)
-        
+        elif user['group_id'] == 2:
+            prompts = GET_team_prompts(user_id)
+            for prompt in prompts:                
+                if prompt['submitted'] == 1:
+                    submission_id = prompt["submission_id"]
+                    sql = f"DELETE FROM submission WHERE submission_id = {submission_id}"
+                    db_cursor.execute(sql)
+                    mysql_client.commit()
+                    break                                            
         sql = f"DELETE FROM user WHERE user_id = {user_id}"
         db_cursor.execute(sql)
         mysql_client.commit()
