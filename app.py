@@ -65,13 +65,15 @@ class prompt_create(Resource):
 @api.route("/submission/create",methods=['POST'])
 class submission_create(Resource):
     def post(self):
-        parser = reqparse.RequestParser()        
-        parser.add_argument('prompt_id',type=int,required=True,location='json')        
-        argument = parser.parse_args()        
-        prompt_id = argument['prompt_id']        
+        parser = reqparse.RequestParser()
+        parser.add_argument('prompt1_id',type=int,required=True,location='json')
+        parser.add_argument('prompt2_id',type=int,required=True,location='json')
+        argument = parser.parse_args()
+        prompt1_id = argument['prompt1_id']
+        prompt2_id = argument['prompt2_id']
         
         try:
-            submission = controller.create_submission(prompt_id)
+            submission = controller.create_submission(prompt1_id, prompt2_id)
         except PermissionError as e:
             return Response(status=400, response=str(e))
         return submission

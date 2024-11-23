@@ -92,7 +92,7 @@ def CREATE_prompt(team_id,date_time,prompt,image):
         db_cursor.execute(query,(team_id,date_time,prompt,image))
         mysql_client.commit()
 
-def CREATE_submission(prompt_id,submit_date):
+def CREATE_submission(prompt_id, submit_date):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         
@@ -108,14 +108,13 @@ def CREATE_submission(prompt_id,submit_date):
         db_cursor.execute(query)
         res = db_cursor.fetchall()
         if len(res) > 0:
-            team_id = res[0]['team_id']
             raise PermissionError("Submission limit exceeded")
         
-        query = """
-            INSERT INTO submission (prompt_id,submit_date,assigned)
-            VALUE (%s,%s, 0)
+        query = f"""
+            INSERT INTO submission (submit_date,assigned)
+            VALUE (\"{submit_date}\", 0)
         """
-        db_cursor.execute(query,(prompt_id,submit_date))
+        db_cursor.execute(query)
         mysql_client.commit()
 
         db_cursor.execute(f"SELECT * FROM submission WHERE submission_id = {db_cursor.lastrowid}")
@@ -362,10 +361,11 @@ def UPDATE_user(user_id, update_data):
         db_cursor.execute(query,tuple(params))               
         mysql_client.commit()       
 
-def UPDATE_prompt(prompt_id):
+def UPDATE_prompt(prompt_id, submission_id):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         db_cursor.execute(f"UPDATE prompts SET submitted = 1 WHERE prompt_id = {prompt_id}")
+        db_cursor.execute(f"UPDATE prompts SET submission_id = {submission_id} WHERE prompt_id = {prompt_id}")
         mysql_client.commit()
     
 def UPDATE_assigned_submission(submission_id, params:dict, update_time):
@@ -373,7 +373,7 @@ def UPDATE_assigned_submission(submission_id, params:dict, update_time):
         db_cursor = init_cursor(mysql_client)
         sql = f"""SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}"""
         db_cursor.execute(sql)
-        res = db_cursor.fetchall()        
+        res = db_cursor.fetchall()
 
         sql = """UPDATE assigned_submissions
                                 SET """

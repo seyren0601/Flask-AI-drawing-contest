@@ -46,10 +46,11 @@ def create_prompt(team_id,prompt):
     db.CREATE_prompt(team_id,date_time,prompt,image)
     return image
 
-def create_submission(prompt_id):
+def create_submission(prompt1_id, prompt2_id):
     date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    submission = db.CREATE_submission(prompt_id,date_time)    
-    prompt = db.UPDATE_prompt(prompt_id)
+    submission = db.CREATE_submission(prompt1_id, date_time)
+    db.UPDATE_prompt(prompt1_id, submission['submission_id'])
+    db.UPDATE_prompt(prompt2_id, submission['submission_id'])
     return submission
 
 def create_assigned_submission(**kwargs):
