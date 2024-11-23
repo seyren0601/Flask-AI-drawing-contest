@@ -206,7 +206,7 @@ def GET_user_authentication(username):
 def GET_team_prompts(team_id):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"""SELECT team_id, name, prompt_id, date_time, prompt, image, submitted
+        db_cursor.execute(f"""SELECT team_id, name, prompt_id, date_time, prompt, image, submitted, submission_id
                             FROM user INNER JOIN prompts ON user.user_id = prompts.team_id
                             WHERE team_id = {team_id}
                         """)
@@ -219,7 +219,7 @@ def GET_prompt(prompt_id):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         db_cursor.execute(f"SELECT * FROM prompts WHERE prompt_id = {prompt_id}")
-        res = db_cursor.fetchall()        
+        res = db_cursor.fetchall()
         res = date_helper.query_date_to_string(res)
         if len(res) == 0:
             raise ValueError()
