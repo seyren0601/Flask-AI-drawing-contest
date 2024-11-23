@@ -176,7 +176,7 @@ class submission_read(Resource):
                 submission = controller.get_team_submission(team_id)
                 return submission
             except ValueError as e:
-                return Response(status=400,response="Team not found")
+                return Response(status=400,response="Team or submission not found")
         submissions = controller.get_all_submissions()
         return submissions
 

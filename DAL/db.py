@@ -237,9 +237,9 @@ def GET_all_submissions():
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
 
-        sql = f"""SELECT name as team_name, submission_id, submission.prompt_id, submit_date, assigned
+        sql = f"""SELECT DISTINCT name as team_name, submission.submission_id, submit_date, assigned
                     FROM submission 
-                        INNER JOIN prompts ON submission.prompt_id = prompts.prompt_id
+                        INNER JOIN prompts ON submission.submission_id = prompts.submission_id
                         INNER JOIN user ON user.user_id = prompts.team_id
                 """
 
@@ -247,7 +247,29 @@ def GET_all_submissions():
         res = db_cursor.fetchall()
         
         res = date_helper.query_date_to_string(res)
-        return res
+        submissions = []
+        for response in res:
+            sql = f"""SELECT prompt_id 
+                        FROM prompts 
+                        INNER JOIN submission ON prompts.submission_id = submission.submission_id
+                        WHERE submission.submission_id = {response['submission_id']}
+            """
+            db_cursor.execute(sql)
+            prompt_ids = db_cursor.fetchall()
+            prompt1_id = prompt_ids[0]['prompt_id']
+            prompt2_id = prompt_ids[1]['prompt_id']
+            
+            response_object = {
+                    "team_name":response['team_name'],
+                    "submission_id":response['submission_id'],
+                    "prompt1_id":prompt1_id,
+                    "prompt2_id":prompt2_id,
+                    "submit_date":response['submit_date'],
+                    "assigned":response['assigned']
+            }
+            
+            submissions.append(response_object)
+        return submissions
 
 def GET_submission(submission_id):
     with init_connection() as mysql_client:
@@ -258,7 +280,43 @@ def GET_submission(submission_id):
         res = date_helper.query_date_to_string(res)
         if len(res) == 0:
             raise ValueError()
-        return res[0]
+        submission = res[0]
+        
+        sql = f"""SELECT prompt_id FROM prompts WHERE submission_id = {submission['submission_id']}
+        """
+        db_cursor.execute(sql)
+        res = db_cursor.fetchall()
+        prompt1 = res[0]
+        prompt2 = res[1]
+        
+        response_object = {
+            "submission_id":submission['submission_id'],
+            "prompt1_id":prompt1['prompt_id'],
+            "prompt2_id":prompt2['prompt_id'],
+            "submit_date":submission['submit_date']
+        }
+        
+        return response_object
+
+def GET_team_submission(team_id):
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        db_cursor.execute(f"""SELECT submission.submission_id, prompt_id, submit_date
+                                FROM submission INNER JOIN prompts ON prompts.submission_id = submission.submission_id
+                                WHERE prompts.team_id = {team_id} ORDER BY prompt_id""")
+        res = db_cursor.fetchall()
+        res = date_helper.query_date_to_string(res)
+        if len(res) == 0:
+            raise ValueError()
+        
+        response_object = {
+            "submission_id":res[0]['submission_id'],
+            "prompt1_id":res[0]['prompt_id'],
+            "prompt2_id":res[1]['prompt_id'],
+            "submit_date":res[0]['submit_date']
+        }
+        
+        return response_object
     
 def GET_submission_history(team_id):
     with init_connection() as mysql_client:
@@ -277,19 +335,6 @@ def GET_submission_history(team_id):
             res = date_helper.query_date_to_string(res)
 
             return res[0]
-
-def GET_team_submission(team_id):
-    with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"""SELECT submission_id, submission.prompt_id, submit_date
-                                FROM submission INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
-                                WHERE prompts.team_id = {team_id}""")
-        res = db_cursor.fetchall()
-        
-        res = date_helper.query_date_to_string(res)
-        if len(res) == 0:
-            raise ValueError()
-        return res[0]
 
 def GET_grader_assigned_submissions(grader_id):
     with init_connection() as mysql_client:
