@@ -70,20 +70,21 @@ VALUES
     
 INSERT INTO user(username, name, group_id, salt, hashed_pw)
 VALUES("usr00006", "team_3", 2, "$2b$12$BZyS/bsY816Aw5tZADVMLe", "$2b$12$BZyS/bsY816Aw5tZADVMLeSGEklXB2346NneyjXEPN/CcRXjcslou");
+-- password: xQaVV
     
 INSERT INTO submission(submit_date, assigned)
 VALUES
-	("2024-11-23", 0),
-    ("2024-11-23", 0);
+	("2024-11-23", 1),
+    ("2024-11-23", 1);
 
 INSERT INTO prompts(team_id, prompt, image, submitted, submission_id)
 VALUES
 	(2, "abc", "b64", 1, 1),
     (2, "xyz", "b64", 1, 1),
     (2, "qwerty", "b64", 0, null),
-    (4, "abc", "b64", 0, null),
-    (4, "xyz", "b64", 1, 2),
-    (4, "qwerty", "b64", 1, 2);
+    (4, "cba", "b64", 0, null),
+    (4, "zyx", "b64", 1, 2),
+    (4, "ytrewq", "b64", 1, 2);
 
 -- INSERT INTO submission(prompt_id, assigned)
 -- VALUES
