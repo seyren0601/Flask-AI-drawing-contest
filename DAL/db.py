@@ -319,22 +319,29 @@ def GET_team_submission(team_id):
         return response_object
     
 def GET_submission_history(team_id):
-    with init_connection() as mysql_client:
-        with init_cursor(mysql_client) as db_cursor:
-            sql = f"""SELECT name, team_info, submit_date, prompt, image 
+    with init_connection() as mysql_client:        
+        sql = f"""SELECT name, team_info, submit_date, prompt, image 
                     FROM user INNER JOIN prompts ON user.user_id = prompts.team_id
-                            INNER JOIN submission ON prompts.prompt_id = submission.prompt_id
+                            INNER JOIN submission ON prompts.submission_id = submission.submission_id
                     WHERE team_id = {team_id} AND submitted = 1
             """
-            db_cursor.execute(sql)
-            res = db_cursor.fetchall()
+        db_cursor = init_cursor(mysql_client)
+        db_cursor.execute(sql)
+        res = db_cursor.fetchall()                        
+        res = date_helper.query_date_to_string(res)        
 
-            if len(res) == 0:
-                raise ValueError()
-            
-            res = date_helper.query_date_to_string(res)
-
-            return res[0]
+        if len(res) == 0:
+            raise ValueError()                                
+        response_object = {
+            "name":res[0]['name'],
+            "team_info": res[0]['team_info'],
+            "submit_date": res[0]['submit_date'],
+            "prompt1":res[0]['prompt'],
+            "prompt2":res[1]['prompt'],
+            "image_1":res[0]['image'],
+            "image_2":res[1]['image']
+        }
+        return response_object
 
 def GET_grader_assigned_submissions(grader_id):
     with init_connection() as mysql_client:
