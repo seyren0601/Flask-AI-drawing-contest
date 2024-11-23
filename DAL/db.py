@@ -6,7 +6,7 @@ import logging
 import random
 from Helper import date_helper
 from dotenv import load_dotenv
-
+from collections import defaultdict
 load_dotenv()
 
 db_user = os.environ["DB_USER"]
@@ -345,19 +345,71 @@ def GET_submission_history(team_id):
 
 def GET_grader_assigned_submissions(grader_id):
     with init_connection() as mysql_client:
-        db_cursor = init_cursor(mysql_client)
-        
-        sql = f"""SELECT assigned_submissions.submission_id, prompt, image, img_grader_id, prompt_grader_id, img_comment, prompt_comment, img_score, prompt_score, status, modified_date
+        db_cursor = init_cursor(mysql_client)        
+        sql = f"""
+                SELECT distinct assigned_submissions.submission_id,
+                    img_grader_id,
+                    prompt_grader_id,prompt,image,
+                    img1_comment, img2_comment,
+                    prompt1_comment, prompt2_comment,
+                    img1_score, img2_score, 
+                    prompt1_score, prompt2_score, 
+                    status, modified_date
                 FROM assigned_submissions
-                    INNER JOIN submission ON assigned_submissions.submission_id = submission.submission_id
-                    INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
+                INNER JOIN submission ON assigned_submissions.submission_id = submission.submission_id
+                INNER JOIN prompts ON prompts.submission_id = submission.submission_id
                 WHERE img_grader_id = {grader_id}  OR prompt_grader_id = {grader_id}"""
         db_cursor.execute(sql)
         
         res = db_cursor.fetchall()
-        
         res = date_helper.query_date_to_string(res)
-        return res
+        merged_data = defaultdict(lambda: {
+            "submission_id": None,
+            "prompt1": None,
+            "prompt2": None,
+            "image1": None,
+            "image2": None,
+            "img_grader_id": None,
+            "prompt_grader_id": None,
+            "img1_comment": None,
+            "img2_comment": None,
+            "prompt1_comment": None,
+            "prompt2_comment": None,
+            "img1_score": None,
+            "img2_score": None,
+            "prompt1_score": None,
+            "prompt2_score": None,
+            "status": None,
+            "modified_date": None
+        })
+
+        for row in res:
+            submission_id = row["submission_id"]
+            entry = merged_data[submission_id]
+            if entry["submission_id"] is None:
+                entry.update({
+                    "submission_id": submission_id,
+                    "img_grader_id": row["img_grader_id"],
+                    "prompt_grader_id": row["prompt_grader_id"],
+                    "img1_comment": row["img1_comment"],
+                    "img2_comment": row["img2_comment"],
+                    "prompt1_comment": row["prompt1_comment"],
+                    "prompt2_comment": row["prompt2_comment"],
+                    "img1_score": row["img1_score"],
+                    "img2_score": row["img2_score"],
+                    "prompt1_score": row["prompt1_score"],
+                    "prompt2_score": row["prompt2_score"],
+                    "status": row["status"],
+                    "modified_date": row["modified_date"]
+                })      
+            if entry["prompt1"] is None:
+                entry.update({"prompt1": row["prompt"], "image1": row["image"]})
+            elif entry["prompt2"] is None:
+                entry.update({"prompt2": row["prompt"], "image2": row["image"]})
+                
+        response = list(merged_data.values())
+        
+        return response
 
 def GET_assigned_submission(submission_id):
     with init_connection() as mysql_client:
@@ -375,23 +427,31 @@ def GET_all_assigned_submissions():
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         sql = """WITH q AS(
-                    SELECT assigned_submissions.submission_id, name as team_name
+                    SELECT distinct assigned_submissions.submission_id, name as team_name
                     FROM assigned_submissions 
                         INNER JOIN submission ON assigned_submissions.submission_id = submission.submission_id
-                        INNER JOIN prompts ON prompts.prompt_id = submission.prompt_id
+                        INNER JOIN prompts ON prompts.submission_id = submission.submission_id
                         INNER JOIN user ON user_id = team_id
-                )
-                SELECT assigned_submissions.submission_id, team_name, img_grader_id, img.name as img_grader_name, prompt_grader_id, prompt.name as prompt_grader_name, img_comment, prompt_comment, img_score, prompt_score, status, modified_date
-                FROM assigned_submissions
-                    INNER JOIN user as img ON assigned_submissions.img_grader_id = img.user_id
-                    INNER JOIN user as prompt ON assigned_submissions.prompt_grader_id = prompt.user_id
-                    INNER JOIN q ON assigned_submissions.submission_id = q.submission_id;
+                    )
+                    SELECT assigned_submissions.submission_id, team_name, 
+                            img_grader_id, img.name as img_grader_name, 
+                            prompt_grader_id, prompt.name as prompt_grader_name, 
+                            img1_comment, img2_comment,
+                            prompt1_comment, prompt2_comment,
+                            img1_score, img2_score, 
+                            prompt1_score, prompt2_score, 
+                            status, modified_date
+                    FROM assigned_submissions
+                        INNER JOIN user as img ON assigned_submissions.img_grader_id = img.user_id
+                        INNER JOIN user as prompt ON assigned_submissions.prompt_grader_id = prompt.user_id
+                        INNER JOIN q ON assigned_submissions.submission_id = q.submission_id;
                     """
         db_cursor.execute(sql)
         
         res = db_cursor.fetchall()
         
         res = date_helper.query_date_to_string(res)
+
         return res 
     
 ### Update ###
