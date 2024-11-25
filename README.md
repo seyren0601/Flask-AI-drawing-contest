@@ -13,8 +13,7 @@ Run steps:
   + OPENAI_KEY=...
 
 2. Database
-- Create table named "ai_drawing_contest" in MySQL
-- Run ALL commands in DDL.sql file
+- Run ALL commands in seed_db.sql file
 
 3. Virtual Environment, dependencies (terminal at clone directory)
 - python -m venv .venv
