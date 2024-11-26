@@ -10,3 +10,4 @@ htmlcov/
 .tox/
 docs/_build/
 .env
+user_credentials.csv

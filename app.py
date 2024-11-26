@@ -4,7 +4,20 @@ from flask_cors import CORS
 from flask_restx import reqparse
 from flask_restx import Api, Resource
 from Controllers import controller
+import os
 
+# def init_app():
+#     """Initialize the core application."""
+#     app = Flask(__name__)
+
+#     with app.app_context():
+#         with open("user_credentials.csv", "w+") as f:
+#             for i in range(50):
+#                 user = controller.create_user(2)
+#                 f.write(f"{user['username']},{user['password']}\n")
+
+#         return app
+# app = init_app()
 
 app = Flask(__name__)
 api = Api(app)
@@ -221,7 +234,14 @@ class query(Resource):
         argument = parser.parse_args()
         query = argument['query']
         data = controller.execute_query(query)
-        return data   
+        return data
+    
+@api.route("/graded_submissions", methods=['GET'])
+class graded_submissions(Resource):
+    def get(self):
+        graded_submissions = controller.get_all_graded_submissions()
+        return graded_submissions
+
 ### UPDATE ###
 @api.route("/user/update",methods=["POST"])
 class user_update(Resource):
@@ -316,4 +336,4 @@ class assigned_submission_update(Resource):
         return Response(status=200)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

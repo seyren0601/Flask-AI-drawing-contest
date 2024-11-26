@@ -270,6 +270,39 @@ def GET_all_submissions():
             
             submissions.append(response_object)
         return submissions
+    
+def GET_all_graded_submissions():
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        assigned_submissions = GET_all_assigned_submissions()
+
+        graded_submissions = []
+
+        for submission in assigned_submissions:
+            if bool(submission['status']):
+                submission_id = submission['submission_id']
+                team_name = submission['team_name']
+                total_score = sum(map(int, [submission['img1_score'], submission['img2_score'], submission['prompt1_score'], submission['prompt2_score']]))
+
+                sql = f"SELECT prompt_id, image, prompt FROM prompts INNER JOIN submission ON prompts.submission_id = submission.submission_id WHERE submission.submission_id = {submission_id} ORDER BY prompt_id"
+                db_cursor.execute(sql)
+                res = db_cursor.fetchall()
+                img1 = res[0]['image']
+                img2 = res[1]['image']
+                prompt1 = res[0]['prompt']
+                prompt2 = res[1]['prompt']
+
+                response = {
+                    "team_name":team_name,
+                    "img1":img1,
+                    "img2":img2,
+                    "prompt1":prompt1,
+                    "prompt2":prompt2,
+                    "total_score":total_score
+                }
+
+                graded_submissions.append(response)
+        return graded_submissions
 
 def GET_submission(submission_id):
     with init_connection() as mysql_client:

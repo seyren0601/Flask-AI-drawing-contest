@@ -120,6 +120,10 @@ def get_all_submissions():
     submissions = db.GET_all_submissions()
     return submissions
 
+def get_all_graded_submissions():
+    graded_submissions = db.GET_all_graded_submissions()
+    return graded_submissions
+
 def get_team_submission(team_id):
     submission = db.GET_team_submission(team_id)
     return submission
