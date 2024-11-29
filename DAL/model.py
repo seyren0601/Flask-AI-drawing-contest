@@ -15,8 +15,8 @@ client = OpenAI(
   api_key=BEARER_TOKEN
 )
 
-MODEL = "dall-e-2"
-SIZE = "512x512"
+MODEL = "dall-e-3"
+SIZE = "1024x1024"
 QUALITY="standard"
 
 def image_generate(prompt):
@@ -24,7 +24,7 @@ def image_generate(prompt):
         model=MODEL,
         prompt=prompt,
         size=SIZE,
-        # quality=QUALITY,
+        quality=QUALITY,
         response_format='b64_json'
     )
     
