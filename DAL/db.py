@@ -11,12 +11,13 @@ load_dotenv()
 
 db_user = os.environ["DB_USER"]
 db_password = os.environ["DB_PASSWORD"]
+db_database = os.environ["DB_DATABASE"]
 def init_connection():
     mysql_client = mysql.connector.connect(
         host="localhost",
         user=db_user,
         password=db_password,
-        database="ai_drawing_contest"
+        database=db_database
     )    
     return mysql_client
 
