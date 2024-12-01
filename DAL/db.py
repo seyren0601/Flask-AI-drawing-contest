@@ -9,12 +9,13 @@ from dotenv import load_dotenv
 from collections import defaultdict
 load_dotenv()
 
+db_host = os.environ["DB_HOST"]
 db_user = os.environ["DB_USER"]
 db_password = os.environ["DB_PASSWORD"]
 db_database = os.environ["DB_DATABASE"]
 def init_connection():
     mysql_client = mysql.connector.connect(
-        host="localhost",
+        host=db_host,
         user=db_user,
         password=db_password,
         database=db_database
