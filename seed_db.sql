@@ -59,18 +59,20 @@ CREATE TABLE assigned_submissions(
     FOREIGN KEY(prompt_grader_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
+INSERT INTO user(username, group_id, salt, hashed_pw)
+VALUES("usr00001", 0, "$2b$12$iN1uw2I0egcVe5NWxLYlsu", "$2b$12$iN1uw2I0egcVe5NWxLYlsuv5fQH6NdwCZwpc4BA5xSMLXG/hsBN6q");
+
+-- username: usr00001
+-- password: yyCGR
+
 INSERT INTO user(username, name, email, group_id)
 VALUES
-	("usr00000", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
-    ("usr00001", "team_1", "aaa@gmail.com", 2),
-    ("usr00002", "grader_1", "asw@gmail.com", 1),
-	("usr00003", "team_2", "aaa@gmail.com", 2),
-    ("usr00004", "grader_2", "aaa@gmail.com", 1),
-    ("usr00005", "grader_3", "aaa@gmail.com", 1);
-    
-INSERT INTO user(username, name, group_id, salt, hashed_pw)
-VALUES("usr00006", "team_3", 2, "$2b$12$BZyS/bsY816Aw5tZADVMLe", "$2b$12$BZyS/bsY816Aw5tZADVMLeSGEklXB2346NneyjXEPN/CcRXjcslou");
--- password: xQaVV
+	("usr00001", "Thịnh Nguyễn", "sorrenw@gmail.com", 0),
+    ("usr00002", "team_1", "aaa@gmail.com", 2),
+    ("usr00003", "grader_1", "asw@gmail.com", 1),
+	("usr00004", "team_2", "aaa@gmail.com", 2),
+    ("usr00005", "grader_2", "aaa@gmail.com", 1),
+    ("usr00006", "grader_3", "aaa@gmail.com", 1);
     
 INSERT INTO submission(submit_date, assigned)
 VALUES
