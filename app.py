@@ -1,5 +1,6 @@
 from flask import Flask, Response,jsonify
 from flask import request
+from flask import make_response
 from flask_cors import CORS
 from flask_restx import reqparse
 from flask_restx import Api, Resource
@@ -145,11 +146,10 @@ class user_login(Resource):
         
         username = arguments['username']
         password = arguments['password']
-        user_id,group_id = controller.user_authenticate(username, password)
-        if user_id != None and group_id != None:
-            return {'user_id':user_id,'group_id':group_id}
-        else:
-            return Response(status=401, response="Failed Authentication")
+        session_token = controller.user_authenticate(username, password)
+        resp = make_response()
+        resp.set_cookie('session_token', session_token)
+        return resp
     
         
 @api.route("/prompts", methods=['GET'])

@@ -1,7 +1,6 @@
 from DAL import db,model
 from Helper import user
 from datetime import datetime
-import time
 ### CREATE ###
 def create_user(group_id):
     password = user.random_password()
@@ -89,8 +88,9 @@ def get_user_by_group(group_id):
     return user
 
 def user_authenticate(username, password):
-    query_res = db.GET_user_authentication(username)
-    if len(query_res) == 0:
+    try:
+        query_res = db.GET_user_authentication(username)
+    except:
         return None
     user_authentication = query_res[0]
     salt = user_authentication['salt'].encode('utf-8')
@@ -98,9 +98,10 @@ def user_authenticate(username, password):
     
     user_id = user_authentication['user_id']
     group_id = user_authentication['group_id']
-    # print(f"Login hashed_pw: {user.hash_password(password, salt)[1]}")      
+    session_token = user_authentication['session_token']
+    # print(f"Login hashed_pw: {user.hash_password(password, salt)[1]}")
     if user.hash_password(password, salt)[1] == hashed_pw:
-        return user_id,group_id
+        return session_token
 
     return None
 

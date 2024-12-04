@@ -4,6 +4,8 @@ import datetime
 import json
 import logging
 import random
+import time
+import secrets
 from Helper import date_helper
 from dotenv import load_dotenv
 from collections import defaultdict
@@ -199,7 +201,12 @@ def Get_user_by_group(group_id):
 def GET_user_authentication(username):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"SELECT user_id,group_id, salt, hashed_pw FROM user WHERE username = \"{username}\"")
+        session_token = secrets.token_urlsafe(16)
+        
+        db_cursor.execute(f"UPDATE user SET session_token = \'{session_token}\' WHERE username = \'{username}\'")
+        mysql_client.commit()
+        
+        db_cursor.execute(f"SELECT user_id, group_id, salt, hashed_pw, session_token FROM user WHERE username = \"{username}\"")
         res = db_cursor.fetchall()
         
         return res
