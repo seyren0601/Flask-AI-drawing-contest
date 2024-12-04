@@ -191,8 +191,8 @@ class user_login(Resource):
         
         username = arguments['username']
         password = arguments['password']
-        session_token = controller.user_authenticate(username, password)
-        resp = make_response()
+        user_id, group_id, session_token = controller.user_authenticate(username, password)
+        resp = make_response({"user_id":user_id, "group_id":group_id})
         resp.set_cookie('session_token', session_token)
         return resp
     

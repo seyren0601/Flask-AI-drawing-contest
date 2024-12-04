@@ -101,7 +101,7 @@ def user_authenticate(username, password):
     session_token = user_authentication['session_token']
     # print(f"Login hashed_pw: {user.hash_password(password, salt)[1]}")
     if user.hash_password(password, salt)[1] == hashed_pw:
-        return session_token
+        return user_id, group_id, session_token
 
     return None
 
