@@ -122,9 +122,7 @@ class submission_assigned(Resource):
 class user_read(Resource):
     def get(self):
         if "session_token" in request.cookies:     
-            session_token = request.cookies.get("session_token")
-            print(type(session_token))
-
+            session_token = request.cookies.get("session_token")            
             user_id = request.args.get('user_id')
             group_id = request.args.get('group_id')
             if user_id:

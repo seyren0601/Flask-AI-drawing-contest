@@ -177,9 +177,9 @@ def GET_all_users(session_token):
         db_cursor = init_cursor(mysql_client)
         db_cursor.execute(f"SELECT * FROM user WHERE session_token=%s",(session_token,))
         res = db_cursor.fetchall()
-        #print(res)
+        
         group_id = res[0]['group_id']
-        print(group_id)
+       
         if group_id == 2:
             raise PermissionError()
         else:
