@@ -75,8 +75,8 @@ def execute_query(query):
     return result
             
 ### READ ###
-def get_all_user():
-    users = db.GET_all_users()
+def get_all_user(session_token):
+    users = db.GET_all_users(session_token)
     return users
 
 def get_user(user_id):

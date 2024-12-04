@@ -121,20 +121,29 @@ class submission_assigned(Resource):
 @api.param('group_id')
 class user_read(Resource):
     def get(self):
-        user_id = request.args.get('user_id')
-        group_id = request.args.get('group_id')
-        if user_id:
-            try:
-                user = controller.get_user(user_id)
+        if "session_token" in request.cookies:     
+            session_token = request.cookies.get("session_token")
+            print(type(session_token))
+
+            user_id = request.args.get('user_id')
+            group_id = request.args.get('group_id')
+            if user_id:
+                try:
+                    user = controller.get_user(user_id,session_token)
+                    return user
+                except ValueError:
+                    return Response(status=400,response="User not found")            
+            elif group_id : 
+                user = controller.get_user_by_group(group_id,session_token)
                 return user
-            except ValueError:
-                return Response(status=400,response="User not found")            
-        elif group_id : 
-            user = controller.get_user_by_group(group_id)
-            return user
+            else:
+                try:
+                    users = controller.get_all_user(session_token)
+                    return users
+                except PermissionError:
+                    return Response(status=403,response="You don't have permission")  
         else:
-            users = controller.get_all_user()
-            return users
+            return Response(status=401)     
         
 @api.route("/user/authenticate", methods=['POST'])
 class user_login(Resource):

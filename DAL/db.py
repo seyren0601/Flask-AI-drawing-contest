@@ -172,13 +172,21 @@ def CREATE_assigned_submission(**kwargs):
             return assigned_submissions
 
 ### READ ###
-def GET_all_users():
+def GET_all_users(session_token):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute("SELECT * FROM user")
+        db_cursor.execute(f"SELECT * FROM user WHERE session_token=%s",(session_token,))
         res = db_cursor.fetchall()
-        res = date_helper.query_date_to_string(res)
-        return res
+        #print(res)
+        group_id = res[0]['group_id']
+        print(group_id)
+        if group_id == 2:
+            raise PermissionError()
+        else:
+            db_cursor.execute("SELECT * FROM user")
+            res = db_cursor.fetchall()
+            res = date_helper.query_date_to_string(res)
+            return res
     
 def GET_user(user_id):
     with init_connection() as mysql_client:
