@@ -6,6 +6,7 @@ from flask_restx import reqparse
 from flask_restx import Api, Resource
 from Controllers import controller
 from Auth import session
+from dotenv import load_dotenv
 import os
 
 # def init_app():
@@ -24,6 +25,9 @@ import os
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
+load_dotenv()
+
+DOMAIN = os.environ['DOMAIN']
 
 ### CREATE ###
 @api.route("/user/create",methods = ['GET','POST'])
@@ -193,7 +197,7 @@ class user_login(Resource):
         password = arguments['password']
         user_id, group_id, session_token = controller.user_authenticate(username, password)
         resp = make_response({"user_id":user_id, "group_id":group_id, "session_token":session_token})
-        resp.set_cookie('session_token', session_token)
+        resp.set_cookie('session_token', session_token, domain=DOMAIN)
         return resp
     
         
