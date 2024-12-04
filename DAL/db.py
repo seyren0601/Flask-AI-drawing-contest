@@ -172,21 +172,13 @@ def CREATE_assigned_submission(**kwargs):
             return assigned_submissions
 
 ### READ ###
-def GET_all_users(session_token):
+def GET_all_users():
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"SELECT * FROM user WHERE session_token=%s",(session_token,))
+        db_cursor.execute("SELECT user_id, name, username, school_name, grade, email, phone_number, group_id, register_date, team_info FROM user")
         res = db_cursor.fetchall()
-        
-        group_id = res[0]['group_id']
-       
-        if group_id == 2:
-            raise PermissionError()
-        else:
-            db_cursor.execute("SELECT * FROM user")
-            res = db_cursor.fetchall()
-            res = date_helper.query_date_to_string(res)
-            return res
+        res = date_helper.query_date_to_string(res)
+        return res
     
 def GET_user(user_id):
     with init_connection() as mysql_client:
@@ -196,6 +188,22 @@ def GET_user(user_id):
         res = date_helper.query_date_to_string(res)
         if len(res) == 0:
             raise ValueError()
+        return res[0]
+    
+def GET_user_from_token(session_token):
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        
+        sql = f"""SELECT user_id, name, username, school_name, grade, email, phone_number, group_id, register_date, team_info
+                FROM user
+                WHERE session_token = '{session_token}'
+        """
+        
+        db_cursor.execute(sql)
+        res = db_cursor.fetchall()
+        res = date_helper.query_date_to_string(res)
+        if len(res) == 0:
+            raise PermissionError()
         return res[0]
 
 def Get_user_by_group(group_id):

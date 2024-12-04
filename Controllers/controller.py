@@ -75,12 +75,12 @@ def execute_query(query):
     return result
             
 ### READ ###
-def get_all_user(session_token):
-    users = db.GET_all_users(session_token)
+def get_all_user():
+    users = db.GET_all_users()
     return users
 
 def get_user(user_id):
-    user = db.GET_user(user_id)    
+    user = db.GET_user(user_id)
     return user
 
 def get_user_by_group(group_id):

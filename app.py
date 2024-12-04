@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask_restx import reqparse
 from flask_restx import Api, Resource
 from Controllers import controller
+from Auth import session
 import os
 
 # def init_app():
@@ -121,27 +122,29 @@ class submission_assigned(Resource):
 @api.param('group_id')
 class user_read(Resource):
     def get(self):
-        if "session_token" in request.cookies:     
-            session_token = request.cookies.get("session_token")            
-            user_id = request.args.get('user_id')
-            group_id = request.args.get('group_id')
-            if user_id:
-                try:
-                    user = controller.get_user(user_id,session_token)
-                    return user
-                except ValueError:
-                    return Response(status=400,response="User not found")            
-            elif group_id : 
-                user = controller.get_user_by_group(group_id,session_token)
+        # Session authentication
+        session_token = request.cookies.get("session_token")
+        try:
+            user = session.authenticate_session(session_token)
+        except PermissionError:
+            return Response(status=401, response="Invalid session token, please login again.")
+        if user['group_id'] == 2:
+            return Response(status=403, response="Access denied.")
+        
+        user_id = request.args.get('user_id')
+        group_id = request.args.get('group_id')
+        if user_id:
+            try:
+                user = controller.get_user(user_id)
                 return user
-            else:
-                try:
-                    users = controller.get_all_user(session_token)
-                    return users
-                except PermissionError:
-                    return Response(status=403,response="You don't have permission")  
+            except ValueError:
+                return Response(status=400,response="User not found")            
+        elif group_id:
+            user = controller.get_user_by_group(group_id)
+            return user
         else:
-            return Response(status=401)     
+            users = controller.get_all_user()
+            return users   
         
 @api.route("/user/authenticate", methods=['POST'])
 class user_login(Resource):
