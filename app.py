@@ -1,6 +1,7 @@
 from flask import Flask, Response,jsonify
 from flask import request
 from flask import make_response
+import flask
 from flask_cors import CORS
 from flask_restx import reqparse
 from flask_restx import Api, Resource
@@ -25,6 +26,7 @@ import os
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
+app.secret_key = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 load_dotenv()
 
 DOMAIN = os.environ['DOMAIN']
@@ -162,13 +164,17 @@ class submission_assigned(Resource):
 class user_read(Resource):
     def get(self):
         # Session authentication
-        session_token = request.cookies.get("session_token")
-        try:
-            user = session.authenticate_session(session_token)
-        except PermissionError:
-            return Response(status=401, response="Invalid session token, please login again.")
-        if user['group_id'] == 2:
-            return Response(status=403, response="Access denied.")
+        login_id = flask.session.get('user_id')
+        if login_id is None:
+            return Response(status=403)
+        
+        # session_token = request.cookies.get("session_token")
+        # try:
+        #     user = session.authenticate_session(session_token)
+        # except PermissionError:
+        #     return Response(status=401, response="Invalid session token, please login again.")
+        # if user['group_id'] == 2:
+        #     return Response(status=403, response="Access denied.")
         
         user_id = request.args.get('user_id')
         group_id = request.args.get('group_id')
@@ -196,10 +202,12 @@ class user_login(Resource):
         username = arguments['username']
         password = arguments['password']
         user_id, group_id, session_token = controller.user_authenticate(username, password)
-        resp = make_response({"user_id":user_id, "group_id":group_id, "session_token":session_token})
-        resp.set_cookie('session_token', session_token, domain=DOMAIN)
-        resp.set_cookie('session_token', session_token, domain='duthi.aicaothuhocduong.com')
-        return resp
+        if user_id is not None:
+            flask.session['user_id'] = user_id
+        # resp = make_response({"user_id":user_id, "group_id":group_id, "session_token":session_token})
+        # resp.set_cookie('session_token', session_token, domain=DOMAIN)
+        # resp.set_cookie('session_token', session_token, domain='duthi.aicaothuhocduong.com')
+        return {"user_id":user_id, "group_id":group_id}
     
         
 @api.route("/prompts", methods=['GET'])
@@ -456,4 +464,4 @@ class assigned_submission_update(Resource):
         return Response(status=200)
 
 if __name__ == '__main__':
-    app.run("0.0.0.0")
+    app.run("0.0.0.0", debug=True)
