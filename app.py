@@ -3,7 +3,7 @@ from flask import request
 from flask import make_response
 import flask
 from flask_cors import CORS
-from flask_restx import reqparse
+from flask_restx import reqparse, fields
 from flask_restx import Api, Resource
 from Controllers import controller
 from Auth import session
@@ -189,10 +189,16 @@ class user_read(Resource):
             return user
         else:
             users = controller.get_all_user()
-            return users   
+            return users
+        
+user_authenticate = api.model('User',{
+    'username':fields.String,
+    'password':fields.String
+})
         
 @api.route("/user/authenticate", methods=['POST'])
 class user_login(Resource):
+    @api.expect(user_authenticate)
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('username',type=str,required=True,location='json')
