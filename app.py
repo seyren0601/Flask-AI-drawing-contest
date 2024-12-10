@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask_restx import reqparse
 from flask_restx import Api, Resource
 from Controllers import controller
+from Helper import server
 import os
 
 # def init_app():
@@ -120,6 +121,13 @@ class submission_assigned(Resource):
 @api.param('group_id')
 class user_read(Resource):
     def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         user_id = request.args.get('user_id')
         group_id = request.args.get('group_id')
         if user_id:
