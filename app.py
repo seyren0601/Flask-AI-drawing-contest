@@ -25,7 +25,7 @@ import os
 
 app = Flask(__name__)
 api = Api(app)
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True,origins="https://duthi.aicaothuhocduong.com")
 app.secret_key = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 load_dotenv()
 
