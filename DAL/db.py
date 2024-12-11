@@ -127,26 +127,29 @@ def CREATE_submission(prompt_id, submit_date):
 def CREATE_assigned_submission(**kwargs):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        if len(kwargs.items()) > 0:
-            submission_id = kwargs['submission_id']
-            img_grader_id = kwargs['img_grader_id']            
-            prompt_grader_id = kwargs['prompt_grader_id']
-            query = """
-                INSERT INTO assigned_submissions (submission_id, img_grader_id,prompt_grader_id, status)
-                VALUE (%s,%s,%s,%s)
-            """
-            db_cursor.execute(query,(submission_id, img_grader_id, prompt_grader_id, 0))
+        submission_id = kwargs['submission_id']
+        img_grader_id = kwargs['img_grader_id']            
+        prompt_grader_id = kwargs['prompt_grader_id']
+        query = """
+            INSERT INTO assigned_submissions (submission_id, img_grader_id,prompt_grader_id, status)
+            VALUE (%s,%s,%s,%s)
+        """
+        db_cursor.execute(query,(submission_id, img_grader_id, prompt_grader_id, 0))
 
-            query = f"UPDATE submission SET assigned = 1 WHERE submission_id = {submission_id}"
-            db_cursor.execute(query)
-            mysql_client.commit()
+        query = f"UPDATE submission SET assigned = 1 WHERE submission_id = {submission_id}"
+        db_cursor.execute(query)
+        mysql_client.commit()
 
-            db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}")
+        db_cursor.execute(f"SELECT * FROM assigned_submissions WHERE submission_id = {submission_id}")
 
-            assigned_submission = db_cursor.fetchall()
-            date_helper.query_date_to_string(assigned_submission)
-            return assigned_submission
-        else:
+        assigned_submission = db_cursor.fetchall()
+        date_helper.query_date_to_string(assigned_submission)
+        return assigned_submission
+            
+        
+def CREATE_randomly_assigned_submissions():
+    with init_connection() as mysql_client:
+        with init_cursor(mysql_client) as db_cursor:
             query = f"SELECT * FROM user WHERE group_id = 1"
             db_cursor.execute(query)
             res = db_cursor.fetchall()
@@ -165,6 +168,7 @@ def CREATE_assigned_submission(**kwargs):
                 img_grader_id = grader_list[random.randint(1, len(grader_list)) - 1]                
                 prompt_grader_id = grader_list[random.randint(1, len(grader_list)) - 1]
                 res = CREATE_assigned_submission(submission_id=submission['submission_id'], img_grader_id=img_grader_id, prompt_grader_id=prompt_grader_id)
+
                 assigned_submissions.append(res[0])
 
             return assigned_submissions

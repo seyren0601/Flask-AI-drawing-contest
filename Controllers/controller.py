@@ -60,7 +60,7 @@ def create_assigned_submission(**kwargs):
                                                             prompt_grader_id=kwargs['prompt_grader_id'])
         return assigned_submission
     else:
-        assigned_submissions = db.CREATE_assigned_submission()
+        assigned_submissions = db.CREATE_randomly_assigned_submissions()
         return assigned_submissions
 
 def execute_query(query):   
