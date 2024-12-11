@@ -1,7 +1,7 @@
 from flask import Flask, Response,jsonify
 from flask import request
 from flask_cors import CORS
-from flask_restx import reqparse
+from flask_restx import reqparse,fields
 from flask_restx import Api, Resource
 from Controllers import controller
 import os
@@ -235,7 +235,19 @@ class query(Resource):
         query = argument['query']
         data = controller.execute_query(query)
         return data
-    
+my_model = api.model('GradedSubmission ', {
+    'team_name': fields.String(description='Tên đội thi',example='Đội Siêu Nhân'),
+    'school_name': fields.String(description='Tên trường',example='Trường XYZ'),
+    'image1': fields.String(description='Ảnh nộp thứ 1',example='chuỗi base64 của ảnh thứ 1'),
+    "image2": fields.String(description='Ảnh nộp thứ 2',example='chuỗi base64 của ảnh thứ 2'),    
+    "prompt1": fields.String(description='Câu prompt hình 1',example='Vẽ con rồng'),
+    "prompt2": fields.String(description='Câu prompt hình 2',example='Vẽ con rắn'),
+    "total_score": fields.Integer(description='Tổng điểm',example=27)
+})
+@api.route("/graded_submissions", methods=['GET'])
+#@api.response(400, 'Authorization not found')
+#@api.response(403, "Forbidden ")
+@api.response(200, "Success and return list of graded submissions",[my_model])
 @api.route("/graded_submissions", methods=['GET'])
 class graded_submissions(Resource):
     def get(self):
