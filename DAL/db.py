@@ -563,11 +563,14 @@ def DELETE_user(user_id):
         user = GET_user(user_id)
         if user['group_id'] == 1:
             assigned_submisssions = GET_grader_assigned_submissions(user_id)
-            for assigned_submission in assigned_submisssions:
-                submission_id = assigned_submission['submission_id']
-            sql = f"""UPDATE submission SET assigned = 0
-                    WHERE submission_id = {submission_id}"""
-            db_cursor.execute(sql)
+            
+            if len(assigned_submisssions) > 0:
+                for assigned_submission in assigned_submisssions:
+                    submission_id = assigned_submission['submission_id']                                   
+                    sql = f"""UPDATE submission SET assigned = 0
+                            WHERE submission_id = {submission_id}"""
+                    db_cursor.execute(sql)
+                    mysql_client.commit()
         elif user['group_id'] == 2:
             prompts = GET_team_prompts(user_id)
             for prompt in prompts:                
