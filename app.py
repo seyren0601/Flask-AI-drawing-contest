@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask_restx import reqparse,fields
 from flask_restx import Api, Resource
 from Controllers import controller
+from Helper import server
 import os
 
 # def init_app():
@@ -27,6 +28,13 @@ CORS(app)
 @api.route("/user/create",methods = ['GET','POST'])
 class user_create(Resource):
     def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         arg = request.args.get('group_id')
         if arg:
             group_id = int(arg)
@@ -39,6 +47,13 @@ class user_create(Resource):
             return Response(status=400, response="Group id invalid")
         
     def post(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         parser = reqparse.RequestParser()
         parser.add_argument('name',type=str,required=True,location='json')
         parser.add_argument('school_name',type=str,required=False,location='json')
@@ -63,6 +78,13 @@ class user_create(Resource):
 @api.route("/prompt/create",methods=['POST'])
 class prompt_create(Resource):
     def post(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         parser = reqparse.RequestParser()
         parser.add_argument('team_id',type=int,required=True,location='json')
         parser.add_argument('prompt',type=str,required=True,location='json')
@@ -78,6 +100,13 @@ class prompt_create(Resource):
 @api.route("/submission/create",methods=['POST'])
 class submission_create(Resource):
     def post(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         parser = reqparse.RequestParser()
         parser.add_argument('prompt1_id',type=int,required=True,location='json')
         parser.add_argument('prompt2_id',type=int,required=True,location='json')
@@ -94,6 +123,13 @@ class submission_create(Resource):
 @api.route("/assigned_submission/create",methods=["POST", "GET"])
 class submission_assigned(Resource):
     def post(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         parser = reqparse.RequestParser()
         parser.add_argument("submission_id",type=int,required=True,location='json')
         parser.add_argument("img_grader_id",type=int,required=True,location='json')        
@@ -110,6 +146,13 @@ class submission_assigned(Resource):
         return assigned_submission
     
     def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         assigned_submissions = controller.create_assigned_submission()
         return assigned_submissions
     
@@ -120,6 +163,13 @@ class submission_assigned(Resource):
 @api.param('group_id')
 class user_read(Resource):
     def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         user_id = request.args.get('user_id')
         group_id = request.args.get('group_id')
         if user_id:
@@ -138,6 +188,13 @@ class user_read(Resource):
 @api.route("/user/authenticate", methods=['POST'])
 class user_login(Resource):
     def post(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         parser = reqparse.RequestParser()
         parser.add_argument('username',type=str,required=True,location='json')
         parser.add_argument('password',type=str,required=True,location='json')
@@ -157,6 +214,13 @@ class user_login(Resource):
 @api.param('prompt_id')
 class prompts_read(Resource):
     def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         team_id = request.args.get('team_id')
         prompt_id = request.args.get('prompt_id')
         if team_id:
@@ -176,6 +240,13 @@ class prompts_read(Resource):
 @api.param('team_id')
 class submission_read(Resource):
     def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         submission_id = request.args.get('submission_id')
         team_id = request.args.get('team_id')
         if submission_id:
@@ -197,6 +268,13 @@ class submission_read(Resource):
 @api.param('team_id')
 class submission_history(Resource):
     def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         team_id = request.args.get('team_id')
         if team_id:
             try:
@@ -212,6 +290,13 @@ class submission_history(Resource):
 @api.param('submission_id')
 class assigned_submissions(Resource):
     def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         submission_id = request.args.get('submission_id')
         grader_id = request.args.get('grader_id')
         if grader_id:
@@ -229,6 +314,13 @@ class assigned_submissions(Resource):
 @api.route("/query",methods=["POST"])
 class query(Resource):
     def post(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         parser = reqparse.RequestParser()
         parser.add_argument('query',type=str,required=True,location='json')
         argument = parser.parse_args()
@@ -251,6 +343,13 @@ my_model = api.model('GradedSubmission ', {
 @api.route("/graded_submissions", methods=['GET'])
 class graded_submissions(Resource):
     def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         graded_submissions = controller.get_all_graded_submissions()
         return graded_submissions
 
@@ -258,6 +357,13 @@ class graded_submissions(Resource):
 @api.route("/user/update",methods=["POST"])
 class user_update(Resource):
     def post(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         parser = reqparse.RequestParser()
         parser.add_argument('user_id',type=int,required=True,location='json')
         parser.add_argument('name',type=str,required=False,location='json')
@@ -287,6 +393,13 @@ class user_update(Resource):
 @api.route("/assigned_submission/update", methods=["POST"])
 class assigned_submission_update(Resource):
     def post(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         parser = reqparse.RequestParser()
         parser.add_argument('submission_id',type=int,required=True,location='json')
         parser.add_argument('img1_score',type=float,required=False,location='json')
@@ -326,6 +439,13 @@ class assigned_submission_update(Resource):
 @api.route("/user/delete", methods=['DELETE'])
 class user_delete(Resource):
     def delete(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
         user_id = request.args.get('user_id')
         if user_id != None:
             try:
@@ -339,6 +459,13 @@ class user_delete(Resource):
 @api.route("/assigned_submission/delete", methods=['DELETE'])
 class assigned_submission_update(Resource):
     def delete(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+            
         submission_id = request.args.get('submission_id')
         if submission_id:
             controller.delete_assigned_submission(submission_id)
