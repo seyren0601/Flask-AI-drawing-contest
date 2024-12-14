@@ -148,6 +148,9 @@ def get_all_assigned_submissions():
     assigned_submissions = db.GET_all_assigned_submissions()
     return assigned_submissions
 
+def get_prompt_count(user_id):
+    prompt_count = db.Get_prompt_count(user_id)
+    return prompt_count
 ### UPDATE ###
 def update_user(user_id,name,username,email,school_name,grade,phonenumber,new_password,team_info):   
     current_user = get_user(user_id)

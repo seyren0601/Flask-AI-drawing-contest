@@ -353,6 +353,26 @@ class graded_submissions(Resource):
         graded_submissions = controller.get_all_graded_submissions()
         return graded_submissions
 
+@api.route("/prompts/count", methods=["GET"])
+class prompt_count(Resource):
+    def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+        
+        user_id = request.args.get('user_id')
+
+        if user_id != None:
+            try:
+                prompt_count = controller.get_prompt_count(user_id)
+                return prompt_count
+            except ValueError:
+                return Response(status=400, response="Invalid user_id")
+        else:
+            return Response(status=400, response="Invalid user_id")                
 ### UPDATE ###
 @api.route("/user/update",methods=["POST"])
 class user_update(Resource):

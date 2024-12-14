@@ -493,7 +493,15 @@ def GET_all_assigned_submissions():
         res = date_helper.query_date_to_string(res)
 
         return res 
-    
+def Get_prompt_count(user_id):
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        query = f"""SELECT COUNT(*) AS SoLuong
+                 FROM prompts WHERE team_id = {user_id}"""
+        db_cursor.execute(query)
+
+        res = db_cursor.fetchall()        
+        return res[0]['SoLuong']
 ### Update ###
 def UPDATE_user(user_id, update_data):
     with init_connection() as mysql_client:
