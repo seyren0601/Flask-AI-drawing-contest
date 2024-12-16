@@ -288,6 +288,7 @@ def GET_all_graded_submissions():
             if bool(submission['status']):
                 submission_id = submission['submission_id']
                 team_name = submission['team_name']
+                school_name = submission['school_name']
                 total_score = sum(map(int, [submission['img1_score'], submission['img2_score'], submission['prompt1_score'], submission['prompt2_score']]))
 
                 sql = f"SELECT prompt_id, image, prompt FROM prompts INNER JOIN submission ON prompts.submission_id = submission.submission_id WHERE submission.submission_id = {submission_id} ORDER BY prompt_id"
@@ -300,6 +301,7 @@ def GET_all_graded_submissions():
 
                 response = {
                     "team_name":team_name,
+                    "school_name":school_name,
                     "img1":img1,
                     "img2":img2,
                     "prompt1":prompt1,
@@ -467,13 +469,13 @@ def GET_all_assigned_submissions():
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         sql = """WITH q AS(
-                    SELECT distinct assigned_submissions.submission_id, name as team_name
+                    SELECT distinct assigned_submissions.submission_id, name as team_name, school_name
                     FROM assigned_submissions 
                         INNER JOIN submission ON assigned_submissions.submission_id = submission.submission_id
                         INNER JOIN prompts ON prompts.submission_id = submission.submission_id
                         INNER JOIN user ON user_id = team_id
                     )
-                    SELECT assigned_submissions.submission_id, team_name, 
+                    SELECT assigned_submissions.submission_id, team_name, q.school_name,
                             img_grader_id, img.name as img_grader_name, 
                             prompt_grader_id, prompt.name as prompt_grader_name, 
                             img1_comment, img2_comment,
