@@ -300,6 +300,7 @@ def GET_all_graded_submissions():
                 prompt2 = res[1]['prompt']
 
                 response = {
+                    "submission_id":submission_id,
                     "team_name":team_name,
                     "school_name":school_name,
                     "img1":img1,
