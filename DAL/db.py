@@ -295,7 +295,9 @@ def GET_all_graded_submissions():
                 db_cursor.execute(sql)
                 res = db_cursor.fetchall()
                 img1 = res[0]['image']
+                img1_id = res[0]['prompt_id']
                 img2 = res[1]['image']
+                img2_id = res[1]['prompt_id']
                 prompt1 = res[0]['prompt']
                 prompt2 = res[1]['prompt']
 
@@ -303,7 +305,9 @@ def GET_all_graded_submissions():
                     "submission_id":submission_id,
                     "team_name":team_name,
                     "school_name":school_name,
+                    "img1_id":img1_id,
                     "img1":img1,
+                    "img2_id":img2_id,
                     "img2":img2,
                     "prompt1":prompt1,
                     "prompt2":prompt2,
@@ -482,7 +486,7 @@ def GET_all_assigned_submissions():
                             img1_comment, img2_comment,
                             prompt1_comment, prompt2_comment,
                             img1_score, img2_score, 
-                            prompt1_score, prompt2_score, 
+                            prompt1_score, prompt2_score,
                             status, modified_date
                     FROM assigned_submissions
                         INNER JOIN user as img ON assigned_submissions.img_grader_id = img.user_id
