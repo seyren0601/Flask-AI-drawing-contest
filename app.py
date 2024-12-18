@@ -330,8 +330,8 @@ class query(Resource):
 my_model = api.model('GradedSubmission ', {
     'team_name': fields.String(description='Tên đội thi',example='Đội Siêu Nhân'),
     'school_name': fields.String(description='Tên trường',example='Trường XYZ'),
-    'image1': fields.String(description='Ảnh nộp thứ 1',example='chuỗi base64 của ảnh thứ 1'),
-    "image2": fields.String(description='Ảnh nộp thứ 2',example='chuỗi base64 của ảnh thứ 2'),
+    'img1': fields.String(description='Ảnh nộp thứ 1',example='chuỗi base64 của ảnh thứ 1'),
+    "img2": fields.String(description='Ảnh nộp thứ 2',example='chuỗi base64 của ảnh thứ 2'),
     'img1_id': fields.Integer(description='Id của ảnh 1',example=1),
     'img2_id': fields.Integer(description='Id của ảnh 2',example=2),
     "prompt1": fields.String(description='Câu prompt hình 1',example='Vẽ con rồng'),
