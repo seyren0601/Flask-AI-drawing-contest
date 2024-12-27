@@ -195,7 +195,17 @@ def GET_user(user_id):
 def Get_user_by_group(group_id):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
-        db_cursor.execute(f"SELECT * FROM user WHERE group_id = {group_id}")
+        query = f"""
+            SELECT *
+            FROM
+                (SELECT * FROM user WHERE group_id = {group_id}) AS A
+            INNER JOIN
+                (SELECT team_id, IF(SUM(submitted) > 0, true, false) AS submitted
+                FROM user INNER JOIN prompts ON user_id = team_id
+                GROUP BY team_id) AS B
+            ON A.user_id = B.team_id;
+        """
+        db_cursor.execute(query)
         res = db_cursor.fetchall()
         res = date_helper.query_date_to_string(res)
         return res
