@@ -354,6 +354,19 @@ class graded_submissions(Resource):
 
         graded_submissions = controller.get_all_graded_submissions()
         return graded_submissions
+    
+@api.route("/all_submissions", methods=['GET'])
+class all_submissions(Resource):
+    def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+        
+        all_submissions = controller.get_all_submissions_requested()
+        return all_submissions
 
 @api.route("/prompts/count", methods=["GET"])
 class prompt_count(Resource):

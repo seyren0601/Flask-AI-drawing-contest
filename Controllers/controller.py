@@ -102,7 +102,7 @@ def user_authenticate(username, password):
     if user.hash_password(password, salt)[1] == hashed_pw:
         return user_id,group_id
 
-    return None
+    return (None, None)
 
 def get_team_prompts(team_id):
     prompts = db.GET_team_prompts(team_id)
@@ -118,6 +118,10 @@ def get_all_prompts():
 
 def get_all_submissions():
     submissions = db.GET_all_submissions()
+    return submissions
+
+def get_all_submissions_requested():
+    submissions = db.GET_all_submissions_requested()
     return submissions
 
 def get_all_graded_submissions():
