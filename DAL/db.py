@@ -375,8 +375,36 @@ def GET_all_submissions_requested(page=0, limit=10):
         #         }
                 
         #         requested.append(response)
-        sql = f"""SELECT * FROM all_submission
-        LIMIT {limit * 2} OFFSET {page * (limit * 2)}
+        # sql = f"""SELECT all_submission.submission_id, name, school_name, all_submission.prompt_id, all_submission.prompt, image, total_score FROM all_submission
+        # INNER JOIN prompts ON prompts.prompt_ID = all_submission.prompt_id
+        # LIMIT {limit * 2} OFFSET {page * (limit * 2)}
+        # """
+        
+        sql = f"""SELECT B.submission_id, name, school_name, B.prompt_id, B.prompt, image, total_score FROM
+                (
+                SELECT * FROM
+                ((
+                SELECT submission.submission_id, name, school_name, prompt_id, prompt, -1 as total_score
+                FROM submission
+                    INNER JOIN prompts ON submission.submission_id = prompts.submission_id
+                    INNER JOIN user ON user_id = team_id
+                WHERE assigned = 0 AND submitted = 1
+                )
+                UNION
+                (
+                SELECT submission.submission_id, name, school_name, prompt_id, prompt, 
+                IF(img1_score is null OR img2_score is null OR prompt1_score is null OR prompt2_score is null, 
+                    -1,
+                    (img1_score + img2_score + prompt1_score + prompt2_score)) AS total_score 
+                FROM submission
+                    INNER JOIN assigned_submissions ON submission.submission_id = assigned_submissions.submission_id
+                    INNER JOIN prompts ON prompts.submission_id = submission.submission_id
+                    INNER JOIN user ON user_id = team_id
+                WHERE assigned = 1
+                )) AS A
+                LIMIT {limit * 2} OFFSET {page * limit * 2}
+                ) AS B
+                INNER JOIN prompts ON prompts.prompt_ID = B.prompt_id
         """
         db_cursor.execute(sql)
         res = db_cursor.fetchall()
