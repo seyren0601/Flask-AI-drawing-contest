@@ -365,7 +365,11 @@ class all_submissions(Resource):
         if not server.server_authentication(bearer_token):
             return Response(status=403)
         
-        all_submissions = controller.get_all_submissions_requested()
+        page = request.args.get('page')
+        limit = request.args.get('limit')
+        if not page or not limit:
+            return Response(status=400, response="Invalid paging info")
+        all_submissions = controller.get_all_submissions_requested(int(page), int(limit))
         return all_submissions
 
 @api.route("/prompts/count", methods=["GET"])

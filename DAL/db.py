@@ -291,92 +291,130 @@ def GET_all_submissions():
             submissions.append(response_object)
         return submissions
 
-def GET_all_submissions_requested():
+def GET_all_submissions_requested(page=0, limit=10):
     with init_connection() as mysql_client:
         db_cursor = init_cursor(mysql_client)
         
         submissions = GET_all_submissions()
+        # requested = []
+        
+        # for submission in submissions:
+        #     submission_id = submission['submission_id']
+        #     team_name = submission['team_name']
+        #     if(submission['assigned'] == 0):
+        #         sql = f"""SELECT submission.submission_id, name, school_name, prompt_id, image, prompt
+        #                 FROM submission
+        #                     INNER JOIN prompts ON submission.submission_id = prompts.submission_id
+        #                     INNER JOIN user ON user_id = team_id
+        #                 WHERE submission.submission_id = {submission_id};
+        #         """
+        
+        #         db_cursor.execute(sql)
+        #         res = db_cursor.fetchall()
+                
+        #         school_name = res[0]['school_name']
+        #         img1 = res[0]['image']
+        #         img1_id = res[0]['prompt_id']
+        #         img2 = res[1]['image']
+        #         img2_id = res[1]['prompt_id']
+        #         prompt1 = res[0]['prompt']
+        #         prompt2 = res[1]['prompt']
+                
+        #         response = {
+        #             "submission_id":submission_id,
+        #                 "team_name":team_name,
+        #                 "school_name":school_name,
+        #                 "img1_id":img1_id,
+        #                 "img1":img1,
+        #                 "img2_id":img2_id,
+        #                 "img2":img2,
+        #                 "prompt1":prompt1,
+        #                 "prompt2":prompt2,
+        #                 "total_score":-1
+        #         }
+                
+        #         requested.append(response)
+        #     else:
+        #         sql = f"""SELECT submission.submission_id, name, school_name, prompt_id, image, prompt, 
+        #                 IF(img1_score is null OR img2_score is null OR prompt1_score is null OR prompt2_score is null, 
+        #                     -1,
+        #                     (img1_score + img2_score + prompt1_score + prompt2_score)) AS total_score
+        #                 FROM submission
+        #                     INNER JOIN assigned_submissions ON submission.submission_id = assigned_submissions.submission_id
+        #                     INNER JOIN prompts ON prompts.submission_id = submission.submission_id
+        #                     INNER JOIN user ON user_id = team_id
+        #                 WHERE submission.submission_id = {submission_id};
+        #         """
+                
+        #         db_cursor.execute(sql)
+        #         res = db_cursor.fetchall()
+                
+        #         db_cursor.execute(sql)
+        #         res = db_cursor.fetchall()
+                
+        #         school_name = res[0]['school_name']
+        #         img1 = res[0]['image']
+        #         img1_id = res[0]['prompt_id']
+        #         img2 = res[1]['image']
+        #         img2_id = res[1]['prompt_id']
+        #         prompt1 = res[0]['prompt']
+        #         prompt2 = res[1]['prompt']
+        #         total_score = res[0]['total_score']
+                
+        #         response = {
+        #             "submission_id":submission_id,
+        #                 "team_name":team_name,
+        #                 "school_name":school_name,
+        #                 "img1_id":img1_id,
+        #                 "img1":img1,
+        #                 "img2_id":img2_id,
+        #                 "img2":img2,
+        #                 "prompt1":prompt1,
+        #                 "prompt2":prompt2,
+        #                 "total_score":total_score
+        #         }
+                
+        #         requested.append(response)
+        sql = f"""SELECT * FROM all_submission
+        LIMIT {limit * 2} OFFSET {page * (limit * 2)}
+        """
+        db_cursor.execute(sql)
+        res = db_cursor.fetchall()
+        
+        
         requested = []
+        for i in range(0, len(res), 2):
+            submission_1 = res[i]
+            submission_2 = res[i + 1]
+            
+            submission_id = submission_1['submission_id']
+            team_name = submission_1['name']
+            school_name = submission_1['school_name']
+            img1_id = submission_1['prompt_id']
+            img1 = submission_1['image']
+            prompt1 = submission_1['prompt']
+            img2_id = submission_2['prompt_id']
+            img2 = submission_2['image']
+            prompt2 = submission_2['prompt']
+            total_score = submission_1['total_score']
+            
+            response = {
+                "submission_id":submission_id,
+                "team_name":team_name,
+                "school_name":school_name,
+                "img1_id":img1_id,
+                "img1":img1,
+                "img2_id":img2_id,
+                "img2":img2,
+                "prompt1":prompt1,
+                "prompt2":prompt2,
+                "total_score":total_score
+            }
+            
+            requested.append(response)
         
-        for submission in submissions:
-            submission_id = submission['submission_id']
-            team_name = submission['team_name']
-            if(submission['assigned'] == 0):
-                sql = f"""SELECT submission.submission_id, name, school_name, prompt_id, image, prompt
-                        FROM submission
-                            INNER JOIN prompts ON submission.submission_id = prompts.submission_id
-                            INNER JOIN user ON user_id = team_id
-                        WHERE submission.submission_id = {submission_id};
-                """
-        
-                db_cursor.execute(sql)
-                res = db_cursor.fetchall()
-                
-                school_name = res[0]['school_name']
-                img1 = res[0]['image']
-                img1_id = res[0]['prompt_id']
-                img2 = res[1]['image']
-                img2_id = res[1]['prompt_id']
-                prompt1 = res[0]['prompt']
-                prompt2 = res[1]['prompt']
-                
-                response = {
-                    "submission_id":submission_id,
-                        "team_name":team_name,
-                        "school_name":school_name,
-                        "img1_id":img1_id,
-                        "img1":img1,
-                        "img2_id":img2_id,
-                        "img2":img2,
-                        "prompt1":prompt1,
-                        "prompt2":prompt2,
-                        "total_score":-1
-                }
-                
-                requested.append(response)
-            else:
-                sql = f"""SELECT submission.submission_id, name, school_name, prompt_id, image, prompt, 
-                        IF(img1_score is null OR img2_score is null OR prompt1_score is null OR prompt2_score is null, 
-                            -1,
-                            (img1_score + img2_score + prompt1_score + prompt2_score)) AS total_score
-                        FROM submission
-                            INNER JOIN assigned_submissions ON submission.submission_id = assigned_submissions.submission_id
-                            INNER JOIN prompts ON prompts.submission_id = submission.submission_id
-                            INNER JOIN user ON user_id = team_id
-                        WHERE submission.submission_id = {submission_id};
-                """
-                
-                db_cursor.execute(sql)
-                res = db_cursor.fetchall()
-                
-                db_cursor.execute(sql)
-                res = db_cursor.fetchall()
-                
-                school_name = res[0]['school_name']
-                img1 = res[0]['image']
-                img1_id = res[0]['prompt_id']
-                img2 = res[1]['image']
-                img2_id = res[1]['prompt_id']
-                prompt1 = res[0]['prompt']
-                prompt2 = res[1]['prompt']
-                total_score = res[0]['total_score']
-                
-                response = {
-                    "submission_id":submission_id,
-                        "team_name":team_name,
-                        "school_name":school_name,
-                        "img1_id":img1_id,
-                        "img1":img1,
-                        "img2_id":img2_id,
-                        "img2":img2,
-                        "prompt1":prompt1,
-                        "prompt2":prompt2,
-                        "total_score":total_score
-                }
-                
-                requested.append(response)
-        
-        return requested    
+        print(len(requested))
+        return requested
         
             
 def GET_all_graded_submissions():

@@ -120,8 +120,8 @@ def get_all_submissions():
     submissions = db.GET_all_submissions()
     return submissions
 
-def get_all_submissions_requested():
-    submissions = db.GET_all_submissions_requested()
+def get_all_submissions_requested(page, limit):
+    submissions = db.GET_all_submissions_requested(page, limit)
     return submissions
 
 def get_all_graded_submissions():
