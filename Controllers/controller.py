@@ -212,3 +212,7 @@ def get_prompt_image(prompt_id):
     
     image = base64.b64decode(image_base64)
     return image
+
+def get_prompt_info(prompt_id):
+    response = db.GET_prompt_info(prompt_id)
+    return response

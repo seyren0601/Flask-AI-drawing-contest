@@ -756,3 +756,18 @@ def GET_prompt_image(prompt_id):
         res = db_cursor.fetchone()
         
         return res['image']
+    
+def GET_prompt_info(prompt_id):
+    with init_connection() as mysql_client:
+        db_cursor = init_cursor(mysql_client)
+        
+        sql = f"""SELECT name, school_name, prompt, image
+        FROM prompts
+            INNER JOIN user ON team_id = user_id
+        WHERE prompt_id = {prompt_id}
+        """
+        
+        db_cursor.execute(sql)
+        res = db_cursor.fetchone()
+        
+        return res

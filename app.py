@@ -535,6 +535,23 @@ class images(Resource):
         buffer = io.BytesIO(image)
         buffer.seek(0)
         return send_file(buffer, mimetype="image/png")
+    
+@api.route("/prompt_info", methods=['GET'])
+class prompt_info(Resource):
+    def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+        
+        prompt_id = request.args.get('prompt_id')
+        if not prompt_id:
+            return Response(status=400, response="Invalid paging info")
+        response = controller.get_prompt_info(int(prompt_id))
+        
+        return response
 
 if __name__ == '__main__':
     app.run("0.0.0.0")
