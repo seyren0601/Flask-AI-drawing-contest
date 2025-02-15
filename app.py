@@ -1,11 +1,12 @@
 from flask import Flask, Response,jsonify
 from flask import request
+from flask import send_file
 from flask_cors import CORS
 from flask_restx import reqparse,fields
 from flask_restx import Api, Resource
 from Controllers import controller
 from Helper import server
-import os
+import io
 
 # def init_app():
 #     """Initialize the core application."""
@@ -327,50 +328,6 @@ class query(Resource):
         query = argument['query']
         data = controller.execute_query(query)
         return data
-my_model = api.model('GradedSubmission ', {
-    'team_name': fields.String(description='Tên đội thi',example='Đội Siêu Nhân'),
-    'school_name': fields.String(description='Tên trường',example='Trường XYZ'),
-    'img1': fields.String(description='Ảnh nộp thứ 1',example='chuỗi base64 của ảnh thứ 1'),
-    "img2": fields.String(description='Ảnh nộp thứ 2',example='chuỗi base64 của ảnh thứ 2'),
-    'img1_id': fields.Integer(description='Id của ảnh 1',example=1),
-    'img2_id': fields.Integer(description='Id của ảnh 2',example=2),
-    "prompt1": fields.String(description='Câu prompt hình 1',example='Vẽ con rồng'),
-    "prompt2": fields.String(description='Câu prompt hình 2',example='Vẽ con rắn'),
-    "total_score": fields.Integer(description='Tổng điểm',example=27)
-})
-@api.route("/graded_submissions", methods=['GET'])
-#@api.response(400, 'Authorization not found')
-#@api.response(403, "Forbidden ")
-@api.response(200, "Success and return list of graded submissions",[my_model])
-@api.route("/graded_submissions", methods=['GET'])
-class graded_submissions(Resource):
-    def get(self):
-        try:
-            bearer_token = request.headers['Authorization']
-        except:
-            return Response(status=400, response="Authorization not found")
-        if not server.server_authentication(bearer_token):
-            return Response(status=403)
-
-        graded_submissions = controller.get_all_graded_submissions()
-        return graded_submissions
-    
-@api.route("/all_submissions", methods=['GET'])
-class all_submissions(Resource):
-    def get(self):
-        try:
-            bearer_token = request.headers['Authorization']
-        except:
-            return Response(status=400, response="Authorization not found")
-        if not server.server_authentication(bearer_token):
-            return Response(status=403)
-        
-        page = request.args.get('page')
-        limit = request.args.get('limit')
-        if not page or not limit:
-            return Response(status=400, response="Invalid paging info")
-        all_submissions = controller.get_all_submissions_requested(int(page), int(limit))
-        return all_submissions
 
 @api.route("/prompts/count", methods=["GET"])
 class prompt_count(Resource):
@@ -512,6 +469,72 @@ class assigned_submission_update(Resource):
             controller.delete_all_ungraded_assigned_submissions()
             
         return Response(status=200)
+    
+    
+### REQUESTED ENDPOINTS ### 
+my_model = api.model('GradedSubmission ', {
+    'team_name': fields.String(description='Tên đội thi',example='Đội Siêu Nhân'),
+    'school_name': fields.String(description='Tên trường',example='Trường XYZ'),
+    'img1': fields.String(description='Ảnh nộp thứ 1',example='chuỗi base64 của ảnh thứ 1'),
+    "img2": fields.String(description='Ảnh nộp thứ 2',example='chuỗi base64 của ảnh thứ 2'),
+    'img1_id': fields.Integer(description='Id của ảnh 1',example=1),
+    'img2_id': fields.Integer(description='Id của ảnh 2',example=2),
+    "prompt1": fields.String(description='Câu prompt hình 1',example='Vẽ con rồng'),
+    "prompt2": fields.String(description='Câu prompt hình 2',example='Vẽ con rắn'),
+    "total_score": fields.Integer(description='Tổng điểm',example=27)
+})
+@api.route("/graded_submissions", methods=['GET'])
+#@api.response(400, 'Authorization not found')
+#@api.response(403, "Forbidden ")
+@api.response(200, "Success and return list of graded submissions",[my_model])
+@api.route("/graded_submissions", methods=['GET'])
+class graded_submissions(Resource):
+    def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+
+        graded_submissions = controller.get_all_graded_submissions()
+        return graded_submissions
+
+@api.route("/all_submissions", methods=['GET'])
+class all_submissions(Resource):
+    def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+        
+        page = request.args.get('page')
+        limit = request.args.get('limit')
+        if not page or not limit:
+            return Response(status=400, response="Invalid paging info")
+        all_submissions = controller.get_all_submissions_requested(int(page), int(limit))
+        return all_submissions
+    
+@api.route("/images", methods=['GET'])
+class images(Resource):
+    def get(self):
+        try:
+            bearer_token = request.headers['Authorization']
+        except:
+            return Response(status=400, response="Authorization not found")
+        if not server.server_authentication(bearer_token):
+            return Response(status=403)
+        
+        prompt_id = request.args.get('prompt_id')
+        if not prompt_id:
+            return Response(status=400, response="Invalid paging info")
+        image = controller.get_prompt_image(int(prompt_id))
+        
+        buffer = io.BytesIO(image)
+        buffer.seek(0)
+        return send_file(buffer, mimetype="image/png")
 
 if __name__ == '__main__':
     app.run("0.0.0.0")

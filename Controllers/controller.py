@@ -2,6 +2,7 @@ from DAL import db,model
 from Helper import user
 from datetime import datetime
 import time
+import base64
 ### CREATE ###
 def create_user(group_id):
     password = user.random_password()
@@ -120,14 +121,6 @@ def get_all_submissions():
     submissions = db.GET_all_submissions()
     return submissions
 
-def get_all_submissions_requested(page, limit):
-    submissions = db.GET_all_submissions_requested(page, limit)
-    return submissions
-
-def get_all_graded_submissions():
-    graded_submissions = db.GET_all_graded_submissions()
-    return graded_submissions
-
 def get_team_submission(team_id):
     submission = db.GET_team_submission(team_id)
     return submission
@@ -204,3 +197,18 @@ def delete_assigned_submission(submission_id):
     
 def delete_all_ungraded_assigned_submissions():
     db.DELETE_all_ungraded_assigned_submissions()
+    
+### REQUESTED CONTROLLERS ###
+def get_all_submissions_requested(page, limit):
+    submissions = db.GET_all_submissions_requested(page, limit)
+    return submissions
+
+def get_all_graded_submissions():
+    graded_submissions = db.GET_all_graded_submissions()
+    return graded_submissions
+
+def get_prompt_image(prompt_id):
+    image_base64 = db.GET_prompt_image(prompt_id)
+    
+    image = base64.b64decode(image_base64)
+    return image
